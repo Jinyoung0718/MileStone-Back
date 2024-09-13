@@ -36,7 +36,7 @@ public class OrderItem {
     @Column(name = "QUANTITY", nullable = false)
     private int quantity;
 
-    @Column(name = "PRODUCT_NAME", nullable = false)
+    @Column(name = "PRODUCT_NAME", nullable = false, length = 100)
     private String productName;
 
     @Column(name = "PRICE", nullable = false)

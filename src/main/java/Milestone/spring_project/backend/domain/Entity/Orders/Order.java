@@ -32,13 +32,13 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @Column(name = "MERCHAT_UID", nullable = false, unique = true)
+    @Column(name = "MERCHAT_UID", nullable = false, unique = true, length = 50)
     private String merchantUid;
 
-    @Column(name = "IMP_UID") @Setter
+    @Column(name = "IMP_UID", length = 50) @Setter
     private String impUid;
 
-    @Column(name = "RECIPIENT_NAME", nullable = false)
+    @Column(name = "RECIPIENT_NAME", nullable = false, length = 100)
     private String recipientName;
 
     @Column(name = "DELIVERY_ADDRESS", nullable = false)
@@ -47,24 +47,24 @@ public class Order {
     @Column(name = "DELIVERY_DETAIL", nullable = false)
     private String deliveryDetail;
 
-    @Column(name = "DELIVERY_ZIPCODE", nullable = false)
+    @Column(name = "DELIVERY_ZIPCODE", nullable = false, length = 10)
     private String deliveryZipcode;
 
-    @Column(name = "PHONE_NUMBER", nullable = false)
+    @Column(name = "PHONE_NUMBER", nullable = false, length = 11)
     private String phoneNumber;
 
     @CreationTimestamp
     @Column(name = "ORDER_DATE", nullable = false, updatable = false)
     private LocalDateTime orderDate;
 
-    @Column(name = "STATUS", nullable = false)
+    @Column(name = "STATUS", nullable = false, length = 10)
     @Enumerated(EnumType.STRING) @Setter
     private OrderStatus status;
 
     @Column(name = "TOTAL_PRICE", nullable = false)
     private Long totalPrice;
 
-    @Column(name = "REQUEST_MESSAGE")
+    @Column(name = "REQUEST_MESSAGE", columnDefinition = "TEXT")
     private String  requestMessage;
 
     @Builder

@@ -12,6 +12,6 @@ public class ProductSize {
     @Column(name = "PRODUCT_SIZE_ID")
     private Long id;
 
-    @Column(name = "SIZE_NAME")
+    @Column(name = "SIZE_NAME", length = 10, nullable = false)
     private String sizeName;
 }

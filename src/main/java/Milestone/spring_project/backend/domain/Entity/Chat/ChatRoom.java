@@ -28,7 +28,7 @@ public class ChatRoom {
     private Member admin;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS", nullable = false) @Setter
+    @Column(name = "STATUS", nullable = false, length = 7) @Setter
     private ChatRoomStatus status = ChatRoomStatus.PENDING;
 
     @CreationTimestamp

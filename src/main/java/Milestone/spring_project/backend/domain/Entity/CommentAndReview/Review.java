@@ -33,7 +33,7 @@ public class Review {
     private Long id;
 
     @Setter
-    @Column(name = "CONTENT", nullable = false, length = 150)
+    @Column(name = "CONTENT", nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @CreationTimestamp

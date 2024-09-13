@@ -11,7 +11,7 @@ public class AdminPhoneNumber {
     @Column(name = "ADMIN_ID")
     private Long id;
 
-    @Column(name = "ADMIN_PHONE_NUM",unique = true)
+    @Column(name = "ADMIN_PHONE_NUM",unique = true, length = 11)
     private String phoneNumber;
 }
 

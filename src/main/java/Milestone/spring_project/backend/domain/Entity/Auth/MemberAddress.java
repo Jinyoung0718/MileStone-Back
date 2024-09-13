@@ -25,16 +25,16 @@ public class MemberAddress {
     @JsonBackReference
     private Member member;
 
-    @Column(name = "ZIPCODE")
+    @Column(name = "ZIPCODE", length = 10)
     private String zipcode;
 
-    @Column(name = "ADDRESS")
+    @Column(name = "ADDRESS", nullable = false)
     private String address;
 
-    @Column(name = "ADDRESS_DETAIL")
+    @Column(name = "ADDRESS_DETAIL", nullable = false)
     private String addressDetail;
 
-    @Column(name = "RECIPIENT_TEL")
+    @Column(name = "RECIPIENT_TEL", length = 11)
     private String tel;
 
     @Column(name = "IS_DEFAULT") @Setter

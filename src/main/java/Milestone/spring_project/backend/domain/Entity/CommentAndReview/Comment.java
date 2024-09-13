@@ -24,7 +24,7 @@ public class Comment {
     @Column(name = "COMMENT_ID")
     private Long id;
 
-    @Column(name = "CONTENT", nullable = false, length = 150)
+    @Column(name = "CONTENT", nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @CreationTimestamp

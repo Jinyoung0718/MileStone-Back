@@ -29,7 +29,7 @@ public class Board {
     @Column(name = "BOARD_TITLE", nullable = false) @Setter
     private String title;
 
-    @Column(name = "BOARD_CONTENT", nullable = false) @Setter
+    @Column(name = "BOARD_CONTENT", nullable = false, columnDefinition = "TEXT") @Setter
     private String content;
 
     @Column(name = "BOARD_VIEWCOUNT")

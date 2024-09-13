@@ -49,7 +49,7 @@ public class Product {
     @Column(name = "PRODUCT_ID")
     private Long id;
 
-    @Column(name = "PRODUCT_NAME", nullable = false)
+    @Column(name = "PRODUCT_NAME", nullable = false, length = 100)
     private String name;
 
     @Column(name = "PRODUCT_IMAGE_1", nullable = false)
@@ -61,7 +61,7 @@ public class Product {
     @Column(name = "PRODUCT_IMAGE_3", nullable = false)
     private String productImg3;
 
-    @Column(name = "PRODUCT_DESCRIPTION", nullable = false)
+    @Column(name = "PRODUCT_DESCRIPTION", nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "PRODUCT_PRICE", nullable = false)

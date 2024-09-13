@@ -1,5 +1,6 @@
 package Milestone.spring_project.backend.domain.Entity.Auth;
 
+import Milestone.spring_project.backend.domain.Entity.Cart.CartItem;
 import Milestone.spring_project.backend.domain.Entity.Chat.ChatRoom;
 import Milestone.spring_project.backend.domain.Entity.CommentAndReview.Board;
 import Milestone.spring_project.backend.domain.Entity.CommentAndReview.Comment;
@@ -24,13 +25,13 @@ public class Member {
     @Column(name = "MEMBER_ID")
     private Long id;
 
-    @Column(name = "USER_EMAIL")
+    @Column(name = "USER_EMAIL", nullable = false)
     private String userEmail;
 
-    @Column(name = "USER_PASSWORD")
+    @Column(name = "USER_PASSWORD", nullable = false)
     private String userPassword;
 
-    @Column(name = "USER_NAME")
+    @Column(name = "USER_NAME",length = 100)
     private String userName;
 
     @CreationTimestamp // 저장 시 현재 시간으로 해당 필드를 저장 시킨다.
@@ -38,7 +39,7 @@ public class Member {
     private LocalDateTime registrationDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS", nullable = false)
+    @Column(name = "STATUS", nullable = false, length = 11)
     private MemberStatus status = MemberStatus.ACTIVATE;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -55,6 +56,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
