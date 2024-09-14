@@ -10,7 +10,7 @@ version = '0.0.1-SNAPSHOT'
 java {
 	sourceCompatibility = '17'
 }
-
+// 배포와 개발 시 환경을 분리해야 함
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
