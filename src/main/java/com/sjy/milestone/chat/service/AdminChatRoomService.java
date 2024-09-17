@@ -1,11 +1,10 @@
 package com.sjy.milestone.chat.service;
 
 import com.sjy.milestone.chat.repository.ChatRoomRepository;
-import com.sjy.milestone.auth.repository.MemberRepository;
+import com.sjy.milestone.account.repository.MemberRepository;
 import com.sjy.milestone.session.WebsocketSessionManager;
 import com.sjy.milestone.chat.dto.ChatRoomDTO;
-import com.sjy.milestone.auth.entity.Member;
-import com.sjy.milestone.auth.MemberStatus;
+import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.chat.entity.ChatRoom;
 import com.sjy.milestone.chat.entity.ChatRoomStatus;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ public class AdminChatRoomService {
     private final RedisTemplate<String, String> redisTemplate;
     private final WebsocketSessionManager websocketSessionManager;
     private static final String LOCK_KEY_PREFIX = "lock/chat/request/";
-    // 공부한 내용 : 당연한 거지만 static final 을 전역변수로 선언하여야지 한 번만 메모리 공간을 지정하지, 메서드에 지정하면 실행 시마다 지정하기 효율이 극악
 
     @Transactional
     public void acceptChatRoom(String roomId, String adminEmail) {
@@ -65,16 +63,11 @@ public class AdminChatRoomService {
     }
 
     @Transactional
-    public void endChatRoom(String roomId, String adminEmail) {
+    public void endChatRoom(String roomId) {
         String key = "chat/request/" + roomId;
         String userEmail = (String) redisTemplate.opsForHash().get(key, "userEmail");
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("채팅방을 찾을 수 없습니다"));
-
-        Member admin = memberRepository.findByUserEmail(adminEmail);
-        if (admin.getStatus() != MemberStatus.ADMIN) {
-            throw new IllegalArgumentException("관리자 권한이 없습니다.");
-        }
 
         chatRoom.setStatus(ChatRoomStatus.CLOSED);
         chatRoomRepository.save(chatRoom);

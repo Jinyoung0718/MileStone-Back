@@ -7,6 +7,7 @@ import com.sjy.milestone.session.SesssionConst;
 import com.sjy.milestone.chat.dto.ChatRoomDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +32,7 @@ public class ChatController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/request/{roomId}/accept")
     public ResponseEntity<Void> acceptChatRoom(@PathVariable String roomId, @CookieValue(value = SesssionConst.SESSION_COOKIE_NAME) String sessionId) {
         String adminEmail = sessionManager.getSession(sessionId);
@@ -38,10 +40,10 @@ public class ChatController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/end/{roomId}")
-    public ResponseEntity<Void> endChatRoom(@PathVariable String roomId, @CookieValue(value = SesssionConst.SESSION_COOKIE_NAME) String sessionId) {
-        String adminEmail = sessionManager.getSession(sessionId);
-        adminChatRoomService.endChatRoom(roomId, adminEmail);
+    public ResponseEntity<Void> endChatRoom(@PathVariable String roomId) {
+        adminChatRoomService.endChatRoom(roomId);
         return ResponseEntity.noContent().build();
     }
 
@@ -52,6 +54,7 @@ public class ChatController {
         return ResponseEntity.ok(chatRooms);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/rooms")
     public ResponseEntity<List<ChatRoomDTO>> getAdminChatRooms() {
         List<ChatRoomDTO> adminChatRooms = adminChatRoomService.getAdminChatRooms();

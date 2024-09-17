@@ -1,6 +1,6 @@
 package com.sjy.milestone.session;
 
-import com.sjy.milestone.Exception.SessionNotFoundException;
+import com.sjy.milestone.exception.notfound.SessionNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

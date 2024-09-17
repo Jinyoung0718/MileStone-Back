@@ -2,10 +2,10 @@ package com.sjy.milestone.chat.service;
 
 import com.sjy.milestone.chat.repository.ChatMessageRepository;
 import com.sjy.milestone.chat.repository.ChatRoomRepository;
-import com.sjy.milestone.auth.repository.MemberRepository;
+import com.sjy.milestone.account.repository.MemberRepository;
 import com.sjy.milestone.chat.dto.ChatContentDTO;
 import com.sjy.milestone.chat.dto.ChatMessageDTO;
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.chat.entity.ChatMessage;
 import com.sjy.milestone.chat.entity.ChatRoom;
 import com.sjy.milestone.chat.entity.ChatRoomStatus;

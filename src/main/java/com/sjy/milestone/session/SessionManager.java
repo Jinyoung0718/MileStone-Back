@@ -1,6 +1,6 @@
 package com.sjy.milestone.session;
 
-import com.sjy.milestone.Exception.SessionNotFoundException;
+import com.sjy.milestone.exception.notfound.SessionNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

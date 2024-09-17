@@ -2,7 +2,7 @@ package com.sjy.milestone.cart.entity;
 
 import com.sjy.milestone.cart.dto.CartItemDTO;
 import com.sjy.milestone.order.dto.TempOrderItemDTO;
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.product.entity.ProductOption;
 import jakarta.persistence.*;
 import lombok.Builder;

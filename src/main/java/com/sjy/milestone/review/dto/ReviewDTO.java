@@ -2,7 +2,7 @@ package com.sjy.milestone.review.dto;
 
 import com.sjy.milestone.review.entity.Review;
 import com.sjy.milestone.product.entity.Product;
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import lombok.*;
 
 import java.time.LocalDateTime;

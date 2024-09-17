@@ -1,8 +1,8 @@
 package com.sjy.milestone.order.service;
 
-import com.sjy.milestone.Exception.PaymentCancellationException;
-import com.sjy.milestone.Exception.PaymentPreparationException;
-import com.sjy.milestone.Exception.PaymentVerificationException;
+import com.sjy.milestone.exception.internal_servererror.PaymentCancellationException;
+import com.sjy.milestone.exception.internal_servererror.PaymentPreparationException;
+import com.sjy.milestone.exception.internal_servererror.PaymentVerificationException;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.request.CancelData;
@@ -54,7 +54,7 @@ public class PortOneService {
     }
 
     public void requestRefund(String impUid) throws IamportResponseException, IOException {
-        CancelData cancelData = new CancelData(impUid, true); // impUid 를 통해 결제 취소 요청
+        CancelData cancelData = new CancelData(impUid, true);
         IamportResponse<Payment> response = iamportClient.cancelPaymentByImpUid(cancelData);
 
         if (response.getResponse() == null) {

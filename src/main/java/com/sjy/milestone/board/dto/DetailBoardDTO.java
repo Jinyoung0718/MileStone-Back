@@ -2,7 +2,7 @@ package com.sjy.milestone.board.dto;
 
 import com.sjy.milestone.comment.dto.CommentDTO;
 import com.sjy.milestone.board.entity.Board;
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import lombok.*;
 
 import java.time.LocalDateTime;

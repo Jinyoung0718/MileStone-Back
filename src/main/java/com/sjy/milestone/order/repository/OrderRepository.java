@@ -1,6 +1,6 @@
 package com.sjy.milestone.order.repository;
 
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.order.entity.Order;
 import com.sjy.milestone.order.entity.OrderStatus;
 import org.springframework.data.jpa.repository.EntityGraph;

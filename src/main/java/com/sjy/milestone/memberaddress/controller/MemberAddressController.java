@@ -3,7 +3,7 @@ package com.sjy.milestone.memberaddress.controller;
 import com.sjy.milestone.memberaddress.MemberAddressService;
 import com.sjy.milestone.session.SessionManager;
 import com.sjy.milestone.session.SesssionConst;
-import com.sjy.milestone.Validator.ValidatorService;
+import com.sjy.milestone.validator.ValidatorService;
 import com.sjy.milestone.memberaddress.dto.AddressCreationDTO;
 import com.sjy.milestone.memberaddress.dto.DefaultAddressDTO;
 import com.sjy.milestone.memberaddress.dto.MemberAddressDTO;

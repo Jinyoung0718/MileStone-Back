@@ -1,6 +1,6 @@
 package com.sjy.milestone.memberaddress.dto;
 
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.memberaddress.entity.MemberAddress;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

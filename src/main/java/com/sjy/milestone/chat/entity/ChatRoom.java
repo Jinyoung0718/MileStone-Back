@@ -1,6 +1,6 @@
 package com.sjy.milestone.chat.entity;
 
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

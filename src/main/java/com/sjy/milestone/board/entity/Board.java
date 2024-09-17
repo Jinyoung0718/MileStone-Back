@@ -3,7 +3,7 @@ package com.sjy.milestone.board.entity;
 import com.sjy.milestone.comment.entity.Comment;
 import com.sjy.milestone.board.dto.DetailBoardDTO;
 import com.sjy.milestone.board.dto.MenuBoardDTO;
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +33,7 @@ public class Board {
     @Column(name = "BOARD_CONTENT", nullable = false, columnDefinition = "TEXT") @Setter
     private String content;
 
-    @Column(name = "BOARD_VIEWCOUNT")
+    @Column(name = "BOARD_VIEW_COUNT")
     private Integer viewCount;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,9 +1,9 @@
 package com.sjy.milestone.config;
 
-import com.sjy.milestone.SocketHandler.Redis_Socket.ChatSocketHandler;
-import com.sjy.milestone.SocketHandler.Redis_Socket.CommentNoticeSocketHandler;
-import com.sjy.milestone.SocketHandler.Redis_Socket.OfflineHandler;
-import com.sjy.milestone.SocketHandler.Redis_Socket.OrderStatusSocketHandler;
+import com.sjy.milestone.sockethandler.redis_socket.ChatSocketHandler;
+import com.sjy.milestone.sockethandler.redis_socket.CommentNoticeSocketHandler;
+import com.sjy.milestone.sockethandler.redis_socket.OfflineHandler;
+import com.sjy.milestone.sockethandler.redis_socket.OrderStatusSocketHandler;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

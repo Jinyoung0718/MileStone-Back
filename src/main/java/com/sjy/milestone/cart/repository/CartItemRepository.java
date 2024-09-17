@@ -1,6 +1,6 @@
 package com.sjy.milestone.cart.repository;
 
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.cart.entity.CartItem;
 import com.sjy.milestone.product.entity.ProductOption;
 import org.springframework.data.jpa.repository.EntityGraph;

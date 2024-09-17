@@ -1,8 +1,8 @@
 package com.sjy.milestone.order.service;
 
-import com.sjy.milestone.Exception.PaymentCancellationException;
-import com.sjy.milestone.Exception.PaymentPreparationException;
-import com.sjy.milestone.Exception.PaymentVerificationException;
+import com.sjy.milestone.exception.internal_servererror.PaymentCancellationException;
+import com.sjy.milestone.exception.internal_servererror.PaymentPreparationException;
+import com.sjy.milestone.exception.internal_servererror.PaymentVerificationException;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class PaymentService {
         Payment payment = portOneService.verifyPayment(impUid);
         if (payment == null || !payment.getMerchantUid().trim().equals(merchantUid.trim())) {
             log.error("결제 검증 실패: 예상 merchantUid {}와 일치하지 않음", merchantUid);
-            throw new PaymentVerificationException("결제 검증 실패: 예상 merchantUid와 일치하지 않음", null);
+            throw new PaymentVerificationException("결제 검증 실패: 예상 merchantUid 와 일치하지 않음", null);
         }
     }
 

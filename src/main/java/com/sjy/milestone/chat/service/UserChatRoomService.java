@@ -1,12 +1,12 @@
 package com.sjy.milestone.chat.service;
 
-import com.sjy.milestone.Exception.UnauthorizedException;
+import com.sjy.milestone.exception.unauthorized.UnauthorizedException;
 import com.sjy.milestone.chat.repository.ChatRoomRepository;
-import com.sjy.milestone.auth.repository.MemberRepository;
+import com.sjy.milestone.account.repository.MemberRepository;
 import com.sjy.milestone.session.WebsocketSessionManager;
 import com.sjy.milestone.chat.dto.ChatRoomDTO;
-import com.sjy.milestone.auth.entity.Member;
-import com.sjy.milestone.auth.MemberStatus;
+import com.sjy.milestone.account.entity.Member;
+import com.sjy.milestone.account.MemberStatus;
 import com.sjy.milestone.chat.entity.ChatRoom;
 import com.sjy.milestone.chat.entity.ChatRoomStatus;
 import lombok.RequiredArgsConstructor;

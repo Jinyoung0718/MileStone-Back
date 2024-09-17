@@ -1,6 +1,6 @@
 package com.sjy.milestone.chat.repository;
 
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.chat.entity.ChatRoom;
 import com.sjy.milestone.chat.entity.ChatRoomStatus;
 import org.jetbrains.annotations.NotNull;

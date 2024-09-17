@@ -1,13 +1,13 @@
 package com.sjy.milestone.memberaddress;
 
-import com.sjy.milestone.Exception.AddressNotFoundException;
-import com.sjy.milestone.auth.repository.MemberRepository;
-import com.sjy.milestone.Util.PhoneNumberUtil;
-import com.sjy.milestone.auth.validator.MemberValidator;
+import com.sjy.milestone.exception.notfound.AddressNotFoundException;
+import com.sjy.milestone.account.repository.MemberRepository;
+import com.sjy.milestone.util.PhoneNumberUtil;
+import com.sjy.milestone.account.validator.MemberValidator;
 import com.sjy.milestone.memberaddress.dto.AddressCreationDTO;
 import com.sjy.milestone.memberaddress.dto.DefaultAddressDTO;
 import com.sjy.milestone.memberaddress.dto.MemberAddressDTO;
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.memberaddress.entity.MemberAddress;
 import com.sjy.milestone.memberaddress.repository.MemberAddressRepository;
 import jakarta.transaction.Transactional;

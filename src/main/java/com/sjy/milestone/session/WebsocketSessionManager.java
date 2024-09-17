@@ -1,6 +1,6 @@
 package com.sjy.milestone.session;
 
-import com.sjy.milestone.Exception.WebSocketMessageException;
+import com.sjy.milestone.exception.internal_servererror.WebSocketMessageException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

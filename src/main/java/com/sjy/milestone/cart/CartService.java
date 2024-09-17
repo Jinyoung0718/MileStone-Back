@@ -1,13 +1,16 @@
 package com.sjy.milestone.cart;
 
-import com.sjy.milestone.Exception.*;
 import com.sjy.milestone.cart.repository.CartItemRepository;
-import com.sjy.milestone.auth.repository.MemberRepository;
+import com.sjy.milestone.account.repository.MemberRepository;
+import com.sjy.milestone.exception.badrequest.CartItemAlreadyExistsException;
+import com.sjy.milestone.exception.badrequest.InsufficientStockException;
+import com.sjy.milestone.exception.notfound.CartItemNotFoundException;
+import com.sjy.milestone.exception.notfound.ProductOptionNotFoundException;
 import com.sjy.milestone.product.repository.ProductOptionRepository;
-import com.sjy.milestone.auth.validator.MemberValidator;
+import com.sjy.milestone.account.validator.MemberValidator;
 import com.sjy.milestone.cart.dto.CartItemDTO;
 import com.sjy.milestone.cart.dto.CartItemRequestDTO;
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.cart.entity.CartItem;
 import com.sjy.milestone.product.entity.ProductOption;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +30,7 @@ public class CartService {
     private final MemberValidator memberValidator;
 
     public void addCartItem(String userEmail, CartItemRequestDTO cartItemRequestDTO) {
-        Member member = memberRepository.findByUserEmail(userEmail); //
+        Member member = memberRepository.findByUserEmail(userEmail);
         memberValidator.validateMember(member);
 
         ProductOption productOption = productOptionRepository.findProductOptionWithProductById(cartItemRequestDTO.getProductOptionId())

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,6 +31,7 @@ public class BoardController {
         return boardService.getBoardById(boardId);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<DetailBoardDTO> createBoard(@RequestBody DetailBoardDTO detailBoardDTO,
                                                       @CookieValue(value = SesssionConst.SESSION_COOKIE_NAME) String sessionid) {
@@ -38,6 +40,7 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBoard);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{boardId}")
     public ResponseEntity<String> deleteBoard(@PathVariable Long boardId,
                                               @CookieValue(value = SesssionConst.SESSION_COOKIE_NAME) String sessionid) {
@@ -46,6 +49,7 @@ public class BoardController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{boardId}")
     public ResponseEntity<DetailBoardDTO> updateBoard(@PathVariable Long boardId,
                                                       @RequestBody DetailBoardDTO detailBoardDTO,
@@ -53,7 +57,6 @@ public class BoardController {
         String userEmail = sessionManager.getSession(sessionId);
         DetailBoardDTO updatedBoard = boardService.updateBoard(boardId, detailBoardDTO, userEmail);
         return ResponseEntity.ok().body(updatedBoard);
-        // 리다이렉트 요구사항 : 작성한 게시판 본문
     }
 
     @GetMapping("/search")
@@ -63,4 +66,4 @@ public class BoardController {
                                            @RequestParam String sort) {
         return boardService.searchBoards(query, page, size, sort);
     }
-} // 삭제 후 리다이렉트는 리액트에서 처리하는 것이 RestFul API 원칙에 더 적합하다.
+}

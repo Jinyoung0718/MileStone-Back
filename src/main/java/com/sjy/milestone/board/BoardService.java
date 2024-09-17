@@ -1,14 +1,13 @@
 package com.sjy.milestone.board;
 
-import com.sjy.milestone.Exception.BoardNotFoundException;
-import com.sjy.milestone.Exception.UnauthorizedException;
+import com.sjy.milestone.exception.notfound.BoardNotFoundException;
+import com.sjy.milestone.exception.unauthorized.UnauthorizedException;
 import com.sjy.milestone.board.repository.BoardRepository;
-import com.sjy.milestone.auth.repository.MemberRepository;
+import com.sjy.milestone.account.repository.MemberRepository;
 import com.sjy.milestone.board.dto.DetailBoardDTO;
 import com.sjy.milestone.board.dto.MenuBoardDTO;
-import com.sjy.milestone.auth.MemberStatus;
 import com.sjy.milestone.board.entity.Board;
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,12 +23,7 @@ public class BoardService {
     private final MemberRepository memberRepository;
 
     public Page<MenuBoardDTO> getBoards(int page, int size, String sort) {
-        Pageable pageable;
-        if (sort.equals("최신순")) {
-            pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        } else {
-            pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
-        }
+        Pageable pageable = getPageable(page, size, sort);
         return boardRepository.findAll(pageable).map(Board::toMenuDTO);
     }
 
@@ -41,13 +35,12 @@ public class BoardService {
         Board board = boardRepository.findWithMemberAndCommentsById(boardId)
                 .orElseThrow(() -> new BoardNotFoundException("게시물을 찾을 수 없습니다"));
 
-        board.incrementViewCount(); // 동시성
+        board.incrementViewCount();
         boardRepository.save(board);
         return board.toDetailDTO();
     }
 
     public DetailBoardDTO createBoard(DetailBoardDTO detailBoardDTO, String userEmail) {
-        checkAdminRights(userEmail);
         Member member = memberRepository.findByUserEmail(userEmail);
         detailBoardDTO.setAuthorEmail(userEmail);
 
@@ -56,14 +49,7 @@ public class BoardService {
         return saveBoard.toDetailDTO();
     }
 
-    // 클라이언트로부터 받은 데이터를 서비스 계층으로 전달하기 위해서 DTO 를 매개변수로 받고
-    // DTO 는 데이터 전송 객체이므로 엔티티와 직접적인 연관이 없으며. DTO 를 엔티티로 변환하여
-    // 데이터베이스에 저장하는 것이 일반적인 패턴이다.
-
-    // return 값을 엔티티에 담는 것도 클라이언트에게 응답으로 보내기 위해서다.
-
     public void deleteBoard(Long boardId, String userEmail) {
-        checkAdminRights(userEmail);
         String authorEmail = boardRepository.findAuthorEmailById(boardId)
                 .orElseThrow(() -> new BoardNotFoundException("게시물을 찾을 수 없습니다"));
 
@@ -74,11 +60,7 @@ public class BoardService {
         boardRepository.deleteById(boardId);
     }
 
-    // deleteBoard 기능은 사용자가 본인이 작성한 게시물 본문에서만 삭제버튼이 보이게 할 것 (리액트 처리)
-    // 백엔드에서는 사용자가 게시물의 작성자인지 확인하는 로직만 추가
-
     public DetailBoardDTO updateBoard(Long boardId, DetailBoardDTO detailBoardDTO, String userEmail) {
-        checkAdminRights(userEmail);
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardNotFoundException("게시물을 찾을 수 없습니다"));
 
@@ -94,23 +76,27 @@ public class BoardService {
     }
 
     public Page<MenuBoardDTO> searchBoards(String query, int page, int size, String sort) {
-        Pageable pageable;
-        if (sort.equals("최신순")) {
-            pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        } else {
-            pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
-        }
+        Pageable pageable = getPageable(page, size, sort);
 
-        return boardRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(query, query, pageable)
+        return boardRepository.findByTitleOrContent(query, pageable)
                 .map(Board::toMenuDTO);
     }
 
-    private void checkAdminRights(String userEmail) {
-        Member member = memberRepository.findByUserEmail(userEmail);
-        if (member.getStatus() != MemberStatus.ADMIN) {
-            throw new UnauthorizedException("해당 작업을 수행할 권한이 없습니다.");
+    private Pageable getPageable(int page, int size, String sort) {
+        BoardSorted boardSorted;
+
+        try {
+            boardSorted = BoardSorted.fromValue(sort);
+        } catch (IllegalArgumentException e) {
+            boardSorted = BoardSorted.LATEST;
         }
+
+        if (boardSorted == BoardSorted.LATEST) {
+            return PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        } else if (boardSorted == BoardSorted.OLDEST) {
+            return PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
+        }
+
+        return PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 }
-
-// 현재 코드가 DTO 를 엔티티에 저장하고, 엔티티에서 값을 다시 할당 받아 출력하는데 반복이 된다. -> 해결해야 할 과제

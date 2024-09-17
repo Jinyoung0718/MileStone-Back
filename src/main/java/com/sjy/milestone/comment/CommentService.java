@@ -1,16 +1,16 @@
 package com.sjy.milestone.comment;
 
-import com.sjy.milestone.Exception.BoardNotFoundException;
-import com.sjy.milestone.Exception.CommentNotFoundException;
-import com.sjy.milestone.Exception.UnauthorizedException;
+import com.sjy.milestone.exception.notfound.BoardNotFoundException;
+import com.sjy.milestone.exception.notfound.CommentNotFoundException;
+import com.sjy.milestone.exception.unauthorized.UnauthorizedException;
 import com.sjy.milestone.board.repository.BoardRepository;
 import com.sjy.milestone.comment.repository.CommentRepository;
-import com.sjy.milestone.auth.repository.MemberRepository;
+import com.sjy.milestone.account.repository.MemberRepository;
 import com.sjy.milestone.session.SessionManager;
 import com.sjy.milestone.comment.dto.CommentDTO;
 import com.sjy.milestone.board.entity.Board;
 import com.sjy.milestone.comment.entity.Comment;
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

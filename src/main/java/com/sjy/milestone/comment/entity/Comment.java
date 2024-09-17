@@ -1,7 +1,7 @@
 package com.sjy.milestone.comment.entity;
 
 import com.sjy.milestone.comment.dto.CommentDTO;
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.board.entity.Board;
 import jakarta.persistence.*;
 import lombok.Builder;

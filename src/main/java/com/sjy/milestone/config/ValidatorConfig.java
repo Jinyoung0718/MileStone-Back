@@ -1,9 +1,9 @@
 package com.sjy.milestone.config;
 
-import com.sjy.milestone.auth.validator.MemberValidator;
-import com.sjy.milestone.auth.validator.MemberValidatorImpl;
-import com.sjy.milestone.auth.validator.PasswordValidator;
-import com.sjy.milestone.auth.validator.PasswordValidatorImpl;
+import com.sjy.milestone.account.validator.MemberValidator;
+import com.sjy.milestone.account.validator.MemberValidatorImpl;
+import com.sjy.milestone.account.validator.PasswordValidator;
+import com.sjy.milestone.account.validator.PasswordValidatorImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

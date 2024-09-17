@@ -1,10 +1,9 @@
 package com.sjy.milestone.order.controller;
 
-import com.sjy.milestone.order.service.OrderManagementService;
 import com.sjy.milestone.order.service.OrderService;
 import com.sjy.milestone.session.SessionManager;
 import com.sjy.milestone.session.SesssionConst;
-import com.sjy.milestone.Validator.ValidatorService;
+import com.sjy.milestone.validator.ValidatorService;
 import com.sjy.milestone.order.dto.CompleteOrderDTO;
 import com.sjy.milestone.order.dto.DirectOrderDTO;
 import com.sjy.milestone.order.dto.OrderDTO;
@@ -24,7 +23,6 @@ public class OrderController {
     private final OrderService orderService;
     private final SessionManager sessionManager;
     private final ValidatorService validatorService;
-    private final OrderManagementService orderManagementService;
 
     // 장바구니의 상품들을 주문 페이지로 넘기는 엔드포인트
     @PostMapping("/fromCart")
@@ -66,14 +64,6 @@ public class OrderController {
         String userEmail = sessionManager.getSession(sessionId);
         orderService.cancelOrder(userEmail, orderId);
         return ResponseEntity.ok("주문이 취소되었습니다");
-    }
-
-    @DeleteMapping("/delete/{orderId}")
-    public ResponseEntity<Void> deleteOrder(@CookieValue(value = SesssionConst.SESSION_COOKIE_NAME) String sessionId,
-                                              @RequestParam Long orderId) {
-        String userEmail = sessionManager.getSession(sessionId);
-        orderManagementService.deleteOrder(userEmail, orderId);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/orderList")

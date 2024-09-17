@@ -18,4 +18,6 @@ public interface MemberAddressRepository extends JpaRepository<MemberAddress, Lo
 
      @Query("SELECT ma FROM MemberAddress ma WHERE ma.member.userEmail = :userEmail AND ma.isDefault = false")
      List<MemberAddress> findByMemberUserEmailAndIsDefaultFalse(@Param("userEmail") String userEmail);
+
+     boolean existsByTel(String phoneNumber);
 }

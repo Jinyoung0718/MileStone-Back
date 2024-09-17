@@ -1,6 +1,6 @@
 package com.sjy.milestone.memberaddress.entity;
 
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.memberaddress.dto.DefaultAddressDTO;
 import com.sjy.milestone.memberaddress.dto.MemberAddressDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;

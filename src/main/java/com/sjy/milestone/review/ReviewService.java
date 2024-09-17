@@ -1,16 +1,16 @@
 package com.sjy.milestone.review;
 
-import com.sjy.milestone.Exception.ProductNotFoundException;
-import com.sjy.milestone.Exception.ReviewNotFoundException;
-import com.sjy.milestone.Exception.UnauthorizedException;
-import com.sjy.milestone.auth.repository.MemberRepository;
+import com.sjy.milestone.exception.notfound.ProductNotFoundException;
+import com.sjy.milestone.exception.notfound.ReviewNotFoundException;
+import com.sjy.milestone.exception.unauthorized.UnauthorizedException;
+import com.sjy.milestone.account.repository.MemberRepository;
 import com.sjy.milestone.product.repository.ProductRepository;
 import com.sjy.milestone.review.repository.ReviewRepository;
-import com.sjy.milestone.auth.validator.MemberValidator;
+import com.sjy.milestone.account.validator.MemberValidator;
 import com.sjy.milestone.review.dto.ReviewDTO;
 import com.sjy.milestone.review.entity.Review;
 import com.sjy.milestone.product.entity.Product;
-import com.sjy.milestone.auth.entity.Member;
+import com.sjy.milestone.account.entity.Member;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

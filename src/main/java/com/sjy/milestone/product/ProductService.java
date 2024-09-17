@@ -1,6 +1,6 @@
 package com.sjy.milestone.product;
 
-import com.sjy.milestone.Exception.ProductNotFoundException;
+import com.sjy.milestone.exception.notfound.ProductNotFoundException;
 import com.sjy.milestone.product.repository.ProductRepository;
 import com.sjy.milestone.product.dto.DetailProductDTO;
 import com.sjy.milestone.product.dto.MenuProductDTO;
