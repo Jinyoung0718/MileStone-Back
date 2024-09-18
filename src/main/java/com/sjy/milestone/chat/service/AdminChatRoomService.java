@@ -2,7 +2,7 @@ package com.sjy.milestone.chat.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sjy.milestone.chat.dto.AdminRedisMessageDTO;
+import com.sjy.milestone.chat.dto.AdminNotificationMessageDTO;
 import com.sjy.milestone.chat.repository.ChatRoomRepository;
 import com.sjy.milestone.account.repository.MemberRepository;
 import com.sjy.milestone.chat.dto.ChatRoomDTO;
@@ -58,8 +58,8 @@ public class AdminChatRoomService {
             ChatRoom chatRoom = ChatRoom.acceptCreateActiveRoom(roomId, user, admin);
             chatRoomRepository.save(chatRoom);
 
-            AdminRedisMessageDTO roomAcceptanceNotification  = new AdminRedisMessageDTO("관리자가 상담 요청을 수락하였습니다", roomId, userEmail);
-            AdminRedisMessageDTO userNotification = new AdminRedisMessageDTO(admin.getUserEmail() + "님이 상담 해드립니다", roomId, user.getUserEmail());
+            AdminNotificationMessageDTO roomAcceptanceNotification  = new AdminNotificationMessageDTO("관리자가 상담 요청을 수락하였습니다", roomId, userEmail);
+            AdminNotificationMessageDTO userNotification = new AdminNotificationMessageDTO(admin.getUserEmail() + "님이 상담 해드립니다", roomId, user.getUserEmail());
 
             try {
                 websocketSessionManager.sendMessageToMember("ws/chat/notifications", user.getUserEmail(), objectMapper.writeValueAsString(roomAcceptanceNotification ));
@@ -83,10 +83,10 @@ public class AdminChatRoomService {
         chatRoom.setStatus(ChatRoomStatus.CLOSED);
         chatRoomRepository.save(chatRoom);
 
-        AdminRedisMessageDTO adminRedisMessageDTO = new AdminRedisMessageDTO("관리자가 채팅을 종료하였습니다", roomId, userEmail);
+        AdminNotificationMessageDTO adminNotificationMessageDTO = new AdminNotificationMessageDTO("관리자가 채팅을 종료하였습니다", roomId, userEmail);
 
         try {
-            redisTemplate.convertAndSend("chat/room/" + roomId, objectMapper.writeValueAsString(adminRedisMessageDTO));
+            redisTemplate.convertAndSend("chat/room/" + roomId, objectMapper.writeValueAsString(adminNotificationMessageDTO));
         } catch (JsonProcessingException e) {
             throw new RuntimeException("메시지 직렬화 실패", e);
         }
