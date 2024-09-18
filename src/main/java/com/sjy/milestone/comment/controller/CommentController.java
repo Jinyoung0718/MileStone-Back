@@ -6,6 +6,7 @@ import com.sjy.milestone.comment.dto.CommentDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,14 +17,16 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/{boardId}/comments")
-    public ResponseEntity<CommentDTO> createComment(@PathVariable Long boardId, @RequestBody  CommentDTO commentDTO, @CookieValue(value = SesssionConst.SESSION_COOKIE_NAME) String sessionId) {
-        CommentDTO createdCmtDTO = commentService.createComment(boardId, commentDTO, sessionId);
+    public ResponseEntity<CommentDTO> createComment(@PathVariable Long boardId, @RequestBody  CommentDTO commentDTO) {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        CommentDTO createdCmtDTO = commentService.createComment(boardId, commentDTO, userEmail);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCmtDTO);
     }
 
     @DeleteMapping("/comments/{commentId}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long commentId, @CookieValue(value = SesssionConst.SESSION_COOKIE_NAME) String sessionId) {
-        commentService.deleteComment(commentId, sessionId);
+    public ResponseEntity<String> deleteComment(@PathVariable Long commentId) {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        commentService.deleteComment(commentId, userEmail);
         return ResponseEntity.noContent().build();
     }
 }

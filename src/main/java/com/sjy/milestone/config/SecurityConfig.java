@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,10 +30,14 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/members/login","/api/members/signup","/api/members/email", "/api/auth/phone-verification-code",
+                                         "/api/auth/email-verification-code","/api/auth//phone-verification-code/verify",
+                                         "/api/auth/email-verification-code/verify", "/api/members/reactivate").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session
+                        .sessionFixation(SessionManagementConfigurer.SessionFixationConfigurer::newSession) // 세션 고정 공격 방지 설정
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 );
 

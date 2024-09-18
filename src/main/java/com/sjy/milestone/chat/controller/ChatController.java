@@ -2,12 +2,12 @@ package com.sjy.milestone.chat.controller;
 
 import com.sjy.milestone.chat.service.AdminChatRoomService;
 import com.sjy.milestone.chat.service.UserChatRoomService;
-import com.sjy.milestone.session.SessionManager;
 import com.sjy.milestone.session.SesssionConst;
 import com.sjy.milestone.chat.dto.ChatRoomDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,11 +17,10 @@ public class ChatController {
 
     private final AdminChatRoomService adminChatRoomService;
     private final UserChatRoomService userChatRoomService;
-    private final SessionManager sessionManager;
 
     @PostMapping("/request")
-    public ResponseEntity<String> requestChatRoom(@CookieValue(value = SesssionConst.SESSION_COOKIE_NAME) String sessionId) {
-        String userEmail = sessionManager.getSession(sessionId);
+    public ResponseEntity<String> requestChatRoom() {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         String roomId = userChatRoomService.requestChatRoom(userEmail);
         return ResponseEntity.ok(roomId);
     }
@@ -32,15 +31,13 @@ public class ChatController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/request/{roomId}/accept")
-    public ResponseEntity<Void> acceptChatRoom(@PathVariable String roomId, @CookieValue(value = SesssionConst.SESSION_COOKIE_NAME) String sessionId) {
-        String adminEmail = sessionManager.getSession(sessionId);
+    public ResponseEntity<Void> acceptChatRoom(@PathVariable String roomId) {
+        String adminEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         adminChatRoomService.acceptChatRoom(roomId, adminEmail);
         return ResponseEntity.ok().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/end/{roomId}")
     public ResponseEntity<Void> endChatRoom(@PathVariable String roomId) {
         adminChatRoomService.endChatRoom(roomId);
@@ -48,13 +45,12 @@ public class ChatController {
     }
 
     @GetMapping("/user/rooms")
-    public ResponseEntity<List<ChatRoomDTO>> getUserChatRooms(@CookieValue(value = SesssionConst.SESSION_COOKIE_NAME) String sessionId) {
-        String userEmail = sessionManager.getSession(sessionId);
+    public ResponseEntity<List<ChatRoomDTO>> getUserChatRooms() {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         List<ChatRoomDTO> chatRooms = userChatRoomService.getUserChatRooms(userEmail);
         return ResponseEntity.ok(chatRooms);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/rooms")
     public ResponseEntity<List<ChatRoomDTO>> getAdminChatRooms() {
         List<ChatRoomDTO> adminChatRooms = adminChatRoomService.getAdminChatRooms();

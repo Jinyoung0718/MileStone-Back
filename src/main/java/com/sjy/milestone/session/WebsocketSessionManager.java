@@ -29,7 +29,14 @@ public class WebsocketSessionManager {
 
     public void addSession(String email, String path, WebSocketSession session) {
         pathSocketSessionMap.computeIfAbsent(path, k -> new ConcurrentHashMap<>())
-                .computeIfAbsent(email, k -> new CopyOnWriteArrayList<>()).add(session);
+                .computeIfAbsent(email, k -> new CopyOnWriteArrayList<>())
+                .stream()
+                .filter(s -> s.getId().equals(session.getId()))
+                .findFirst()
+                .ifPresentOrElse(s -> log.info("Session already exists: {}", session.getId()), () -> {
+                    log.info("Adding new session: {}", session.getId());
+                    pathSocketSessionMap.get(path).get(email).add(session);
+                });
 
         List<String> messages = readOfflineMessage(path, email);
         messages.forEach(message -> sendMessageToMember(path, email, message));

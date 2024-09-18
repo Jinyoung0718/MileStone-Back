@@ -23,7 +23,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         try {
             LoginDTO loginDTO = new ObjectMapper().readValue(request.getInputStream(), LoginDTO.class);
 
-            // JWT 실제 토큰이 아니라, 스프링 시큐리티 사용되는 인증 객체이다
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(loginDTO.getUserEmail(), loginDTO.getUserPassword());
 

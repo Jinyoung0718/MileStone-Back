@@ -1,7 +1,6 @@
 package com.sjy.milestone.board.controller;
 
 import com.sjy.milestone.board.BoardService;
-import com.sjy.milestone.session.SessionManager;
 import com.sjy.milestone.session.SesssionConst;
 import com.sjy.milestone.board.dto.DetailBoardDTO;
 import com.sjy.milestone.board.dto.MenuBoardDTO;
@@ -10,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/boards")
 public class BoardController {
     private final BoardService boardService;
-    private final SessionManager sessionManager;
 
     @GetMapping
     public Page<MenuBoardDTO> getBoards(@RequestParam(defaultValue = "0") int page,
@@ -33,28 +32,24 @@ public class BoardController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<DetailBoardDTO> createBoard(@RequestBody DetailBoardDTO detailBoardDTO,
-                                                      @CookieValue(value = SesssionConst.SESSION_COOKIE_NAME) String sessionid) {
-        String userEmail = sessionManager.getSession(sessionid);
+    public ResponseEntity<DetailBoardDTO> createBoard(@RequestBody DetailBoardDTO detailBoardDTO) {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         DetailBoardDTO createdBoard = boardService.createBoard(detailBoardDTO, userEmail);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBoard);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<String> deleteBoard(@PathVariable Long boardId,
-                                              @CookieValue(value = SesssionConst.SESSION_COOKIE_NAME) String sessionid) {
-        String userEmail = sessionManager.getSession(sessionid);
+    public ResponseEntity<String> deleteBoard(@PathVariable Long boardId) {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         boardService.deleteBoard(boardId, userEmail);
         return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{boardId}")
-    public ResponseEntity<DetailBoardDTO> updateBoard(@PathVariable Long boardId,
-                                                      @RequestBody DetailBoardDTO detailBoardDTO,
-                                                      @CookieValue(value = SesssionConst.SESSION_COOKIE_NAME) String sessionId) {
-        String userEmail = sessionManager.getSession(sessionId);
+    public ResponseEntity<DetailBoardDTO> updateBoard(@PathVariable Long boardId, @RequestBody DetailBoardDTO detailBoardDTO) {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         DetailBoardDTO updatedBoard = boardService.updateBoard(boardId, detailBoardDTO, userEmail);
         return ResponseEntity.ok().body(updatedBoard);
     }

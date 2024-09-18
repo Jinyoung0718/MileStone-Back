@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
@@ -25,7 +26,7 @@ public class AdminChatRoomService {
     private final WebsocketSessionManager websocketSessionManager;
     private static final String LOCK_KEY_PREFIX = "lock/chat/request/";
 
-    @Transactional
+    @Transactional @PreAuthorize("hasRole('ADMIN')")
     public void acceptChatRoom(String roomId, String adminEmail) {
         String key = "chat/request/" + roomId;
         String lockKey = LOCK_KEY_PREFIX + roomId;
@@ -62,7 +63,7 @@ public class AdminChatRoomService {
         }
     }
 
-    @Transactional
+    @Transactional @PreAuthorize("hasRole('ADMIN')")
     public void endChatRoom(String roomId) {
         String key = "chat/request/" + roomId;
         String userEmail = (String) redisTemplate.opsForHash().get(key, "userEmail");
@@ -77,7 +78,7 @@ public class AdminChatRoomService {
         redisTemplate.delete(key);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) @PreAuthorize("hasRole('ADMIN')")
     public List<ChatRoomDTO> getAdminChatRooms() {
         List<ChatRoomDTO> pendingChatRooms = new ArrayList<>();
         Cursor<byte[]> cursor = Objects.requireNonNull(redisTemplate.getConnectionFactory())

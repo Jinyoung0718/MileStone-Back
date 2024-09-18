@@ -2,7 +2,6 @@ package com.sjy.milestone.account.controller;
 
 import com.sjy.milestone.account.dto.*;
 import com.sjy.milestone.account.service.AccountService;
-import com.sjy.milestone.session.SessionManager;
 import com.sjy.milestone.session.SesssionConst;
 import com.sjy.milestone.validator.ValidatorService;
 import jakarta.servlet.http.Cookie;
@@ -10,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     private final AccountService accountService;
-    private final SessionManager sessionManager;
     private final ValidatorService validatorService;
 
     @PostMapping("/signup")
@@ -30,32 +29,25 @@ public class AccountController {
     } //singUp
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@Valid @RequestBody LoginDTO loginDTO, BindingResult bindingResult, HttpServletResponse response) {
+    public ResponseEntity<String> login(@Valid @RequestBody LoginDTO loginDTO, BindingResult bindingResult) {
         validatorService.validate(bindingResult);
-        String sessionId = accountService.login(loginDTO);
-        Cookie sessionCookie = new Cookie(SesssionConst.SESSION_COOKIE_NAME, sessionId);
-        sessionCookie.setPath("/");
-        sessionCookie.setMaxAge(3600);
-        response.addCookie(sessionCookie);
-
+        accountService.login(loginDTO);
         return ResponseEntity.ok("로그인에 성공하였습니다");
-    } // login
+    } // JSESSIONID 쿠키에 세션 ID를 저장하고 반환 - login
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@CookieValue(value = SesssionConst.SESSION_COOKIE_NAME, required = false) String sessionId, HttpServletResponse response) {
-        if (sessionId != null) {
-            accountService.logout(sessionId);
-            Cookie sessionNullCookie = new Cookie(SesssionConst.SESSION_COOKIE_NAME, null);
-            sessionNullCookie.setPath("/");
-            sessionNullCookie.setMaxAge(0);
-            response.addCookie(sessionNullCookie);
-        }
+        accountService.logout(sessionId);
+        Cookie sessionCookie = new Cookie(SesssionConst.SESSION_COOKIE_NAME, null);
+        sessionCookie.setMaxAge(0);
+        sessionCookie.setPath("/");
+        response.addCookie(sessionCookie);
         return ResponseEntity.ok("로그아웃 성공하였습니다");
     } // logout
 
     @PatchMapping("/unRegister")
-    public ResponseEntity<String> unRegister(@CookieValue(value = SesssionConst.SESSION_COOKIE_NAME, required = false) String sessionId) {
-        String userEmail = sessionManager.getSession(sessionId);
+    public ResponseEntity<String> unRegister() {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         accountService.turnDeactivateAuth(userEmail);
         return ResponseEntity.ok("회원상태가 비활성화 되었습니다");
     } // unRegister
@@ -67,8 +59,8 @@ public class AccountController {
     }
 
     @GetMapping("/status")
-    public ResponseEntity<MemberContextDTO> getMemberStatus(@CookieValue(value = SesssionConst.SESSION_COOKIE_NAME, required = false) String sessionId) {
-        String userEmail = sessionManager.getSession(sessionId);
+    public ResponseEntity<MemberContextDTO> getMemberStatus() {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         MemberContextDTO memberContextDTO = accountService.getMemberStatus(userEmail);
         return ResponseEntity.ok(memberContextDTO);
     }

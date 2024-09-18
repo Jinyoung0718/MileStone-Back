@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 @Service @RequiredArgsConstructor @Transactional
@@ -40,6 +41,7 @@ public class BoardService {
         return board.toDetailDTO();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public DetailBoardDTO createBoard(DetailBoardDTO detailBoardDTO, String userEmail) {
         Member member = memberRepository.findByUserEmail(userEmail);
         detailBoardDTO.setAuthorEmail(userEmail);
@@ -49,6 +51,7 @@ public class BoardService {
         return saveBoard.toDetailDTO();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteBoard(Long boardId, String userEmail) {
         String authorEmail = boardRepository.findAuthorEmailById(boardId)
                 .orElseThrow(() -> new BoardNotFoundException("게시물을 찾을 수 없습니다"));
@@ -60,6 +63,7 @@ public class BoardService {
         boardRepository.deleteById(boardId);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public DetailBoardDTO updateBoard(Long boardId, DetailBoardDTO detailBoardDTO, String userEmail) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardNotFoundException("게시물을 찾을 수 없습니다"));

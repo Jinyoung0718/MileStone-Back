@@ -12,7 +12,6 @@ import com.sjy.milestone.util.PhoneNumberUtil;
 import com.sjy.milestone.session.WebsocketSessionManager;
 import com.sjy.milestone.account.validator.MemberValidator;
 import com.sjy.milestone.account.validator.PasswordValidator;
-import com.sjy.milestone.session.SessionManager;
 import com.sjy.milestone.account.dto.LoginDTO;
 import com.sjy.milestone.account.dto.MemberContextDTO;
 import com.sjy.milestone.account.dto.SignupDTO;
@@ -21,6 +20,7 @@ import com.sjy.milestone.memberaddress.entity.MemberAddress;
 import com.sjy.milestone.account.MemberStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +31,6 @@ public class AccountService {
     private final MemberRepository memberRepository;
     private final MemberAddressRepository memberAddressRepository;
     private final PasswordEncoder passwordEncoder;
-    private final SessionManager sessionManager;
     private final WebsocketSessionManager websocketSessionManager;
     private final PasswordValidator passwordValidator;
     private final MemberValidator memberValidator;
@@ -71,7 +70,7 @@ public class AccountService {
         redisService.deleteData(signupDTO.getTel() + ":verified");
     } // signUp
 
-    public String login(LoginDTO loginDTO) {
+    public void login(LoginDTO loginDTO) {
         Member member = memberRepository.findByUserEmail(loginDTO.getUserEmail());
 
         if (member == null || !passwordEncoder.matches(loginDTO.getUserPassword(), member.getUserPassword())) {
@@ -81,19 +80,15 @@ public class AccountService {
         if (member.getStatus() == MemberStatus.DEACTIVATED) {
             throw new AccountDeactivatedException("비활성화된 계정입니다. 복구하시겠습니까?");
         }
-
-        return sessionManager.createSession(member.getUserEmail());
     } // login
 
     public void logout(String sessionId) {
-        sessionManager.removeSession(sessionId);
         websocketSessionManager.removeSessionFromAllPaths(sessionId);
-        log.info("세션이 제거되었습니다");
+        SecurityContextHolder.clearContext();
     } // logout
 
     public void turnDeactivateAuth(String userEmail) {
         if(userEmail == null) {
-            log.info("새션 정보가 없습니다");
             throw new SessionNotFoundException("세션 정보가 유효하지 않습니다");
         }
 
@@ -101,11 +96,7 @@ public class AccountService {
         memberValidator.validateMember(member);
 
         member.deactivate();
-        log.info("회원 탈퇴 상태로 업데이트 했습니다 = {}", userEmail);
     }
-
-    // turnDeactivateAuth, 아예 회원을 DB 에서 지우게 하면, 해당 회원이 적은 게시물, 댓글 및 리뷰 등이 있어
-    // DB 에서 삭제시키는 대신 비활 모드로 전환하게 하는 방식을 취함
 
     public void turnReactiveAuth(LoginDTO loginDTO) {
         Member member = memberRepository.findByUserEmailAndStatus(loginDTO.getUserEmail(), MemberStatus.DEACTIVATED)
