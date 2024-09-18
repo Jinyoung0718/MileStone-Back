@@ -1,12 +1,15 @@
 package com.sjy.milestone.chat.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sjy.milestone.chat.dto.AdminRedisMessageDTO;
 import com.sjy.milestone.chat.repository.ChatRoomRepository;
 import com.sjy.milestone.account.repository.MemberRepository;
-import com.sjy.milestone.session.WebsocketSessionManager;
 import com.sjy.milestone.chat.dto.ChatRoomDTO;
 import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.chat.entity.ChatRoom;
 import com.sjy.milestone.chat.entity.ChatRoomStatus;
+import com.sjy.milestone.session.WebsocketSessionManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,7 +26,9 @@ public class AdminChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper objectMapper;
     private final WebsocketSessionManager websocketSessionManager;
+
     private static final String LOCK_KEY_PREFIX = "lock/chat/request/";
 
     @Transactional @PreAuthorize("hasRole('ADMIN')")
@@ -53,11 +58,16 @@ public class AdminChatRoomService {
             ChatRoom chatRoom = ChatRoom.acceptCreateActiveRoom(roomId, user, admin);
             chatRoomRepository.save(chatRoom);
 
-            String notificationJsonMessage = "{\"message\":\"" + admin.getUserEmail() + "님이 상담 해드립니다\", \"roomId\":\"" + roomId + "\", \"recipientEmail\":\"" + user.getUserEmail() + "\"}";
-            websocketSessionManager.sendMessageToMember("ws/chat/notifications", user.getUserEmail(), notificationJsonMessage);
-            // 사용자와 관리자는 관리자가 요청에 응답하는 순간을 잡기위해, 소켓을 날리고, 그 후 동시에 채팅방에 들어가기 위해 따로 소켓을 이용한다
-            String jsonMessage = "{\"message\":\"관리자가 상담 요청을 수락하였습니다\", \"roomId\":\"" + roomId + "\", \"recipientEmail\":\"" + userEmail + "\"}";
-            redisTemplate.convertAndSend("chat/room/" + roomId, jsonMessage);
+            AdminRedisMessageDTO roomAcceptanceNotification  = new AdminRedisMessageDTO("관리자가 상담 요청을 수락하였습니다", roomId, userEmail);
+            AdminRedisMessageDTO userNotification = new AdminRedisMessageDTO(admin.getUserEmail() + "님이 상담 해드립니다", roomId, user.getUserEmail());
+
+            try {
+                websocketSessionManager.sendMessageToMember("ws/chat/notifications", user.getUserEmail(), objectMapper.writeValueAsString(roomAcceptanceNotification ));
+                redisTemplate.convertAndSend("chat/room/" + roomId, objectMapper.writeValueAsString(userNotification));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("메시지 직렬화 실패", e);
+            }
+
         } finally {
             redisTemplate.delete(lockKey);
         }
@@ -73,8 +83,14 @@ public class AdminChatRoomService {
         chatRoom.setStatus(ChatRoomStatus.CLOSED);
         chatRoomRepository.save(chatRoom);
 
-        String jsonMessage = "{\"message\":\"관리자가 채팅을 종료하였습니다\", \"roomId\":\"" + roomId + "\", \"recipientEmail\":\"" + userEmail + "\"}";
-        redisTemplate.convertAndSend("chat/room/" + roomId, jsonMessage);
+        AdminRedisMessageDTO adminRedisMessageDTO = new AdminRedisMessageDTO("관리자가 채팅을 종료하였습니다", roomId, userEmail);
+
+        try {
+            redisTemplate.convertAndSend("chat/room/" + roomId, objectMapper.writeValueAsString(adminRedisMessageDTO));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("메시지 직렬화 실패", e);
+        }
+
         redisTemplate.delete(key);
     }
 

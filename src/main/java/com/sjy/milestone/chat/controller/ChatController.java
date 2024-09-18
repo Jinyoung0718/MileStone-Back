@@ -2,11 +2,9 @@ package com.sjy.milestone.chat.controller;
 
 import com.sjy.milestone.chat.service.AdminChatRoomService;
 import com.sjy.milestone.chat.service.UserChatRoomService;
-import com.sjy.milestone.session.SesssionConst;
 import com.sjy.milestone.chat.dto.ChatRoomDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 

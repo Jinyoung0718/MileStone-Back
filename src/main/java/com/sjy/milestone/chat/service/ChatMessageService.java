@@ -1,5 +1,8 @@
 package com.sjy.milestone.chat.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sjy.milestone.chat.dto.RedisMessageDTO;
 import com.sjy.milestone.chat.repository.ChatMessageRepository;
 import com.sjy.milestone.chat.repository.ChatRoomRepository;
 import com.sjy.milestone.account.repository.MemberRepository;
@@ -23,6 +26,7 @@ public class ChatMessageService {
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper objectMapper;
 
     @Transactional
     public ChatMessageDTO sendMessage(String roomId, String senderEmail, ChatContentDTO chatContentDTO) {
@@ -51,9 +55,12 @@ public class ChatMessageService {
 
         ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
 
-        String jsonMessage = "{\"roomId\":\"" + roomId + "\", \"senderEmail\":\"" + senderEmail + "\", \"recipientEmail\":\"" + recipient.getUserEmail() + "\", \"content\":\"" + content + "\"}";
-        redisTemplate.convertAndSend("chat/room/" + roomId, jsonMessage);
-        // 객체를 직렬화를 통해서 클라이언트가 객체로 받게끔 하자
+        try {
+            RedisMessageDTO redisMessageDTO = new RedisMessageDTO(roomId, senderEmail, recipient.getUserEmail(), content);
+            redisTemplate.convertAndSend("chat/room/" + roomId, objectMapper.writeValueAsString(redisMessageDTO));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("메시지 직렬화 실패", e);
+        }
 
         return ChatMessageDTO.fromEntity(savedMessage);
     }

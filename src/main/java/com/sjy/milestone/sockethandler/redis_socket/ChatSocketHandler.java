@@ -1,7 +1,9 @@
 package com.sjy.milestone.sockethandler.redis_socket;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sjy.milestone.chat.dto.RedisMessageDTO;
 import com.sjy.milestone.exception.notfound.SessionNotFoundException;
-import com.sjy.milestone.util.WebSocketUtil;
 import com.sjy.milestone.session.WebsocketSessionManager;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 
     private static final String PATH = "ws/chat";
     private final WebsocketSessionManager websocketSessionManager;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void afterConnectionEstablished(@NonNull WebSocketSession session) {
@@ -38,7 +41,12 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 
     @SuppressWarnings("unused")
     public void handleMessage(String message) {
-        String targetEmail = WebSocketUtil.extractEmailFromMessageForChat(message);
-        websocketSessionManager.sendMessageToMember(PATH, targetEmail, message);
+        try {
+            RedisMessageDTO redisMessageDTO = objectMapper.readValue(message, RedisMessageDTO.class);
+            String targetEmail = redisMessageDTO.getRecipientEmail();
+            websocketSessionManager.sendMessageToMember(PATH, targetEmail, objectMapper.writeValueAsString(redisMessageDTO));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("직렬화 과정 중 문제가 발생하였습니다", e);
+        }
     }
 }

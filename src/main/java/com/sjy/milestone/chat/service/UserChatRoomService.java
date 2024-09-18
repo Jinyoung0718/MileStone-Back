@@ -1,5 +1,8 @@
 package com.sjy.milestone.chat.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sjy.milestone.chat.dto.UserNotificationMessageDTO;
 import com.sjy.milestone.exception.unauthorized.UnauthorizedException;
 import com.sjy.milestone.chat.repository.ChatRoomRepository;
 import com.sjy.milestone.account.repository.MemberRepository;
@@ -25,6 +28,7 @@ public class UserChatRoomService {
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final WebsocketSessionManager websocketSessionManager;
+    private final ObjectMapper objectMapper;
 
     @Transactional
     public String requestChatRoom(String userEmail) {
@@ -39,12 +43,17 @@ public class UserChatRoomService {
 
         List<Member> admins = memberRepository.findAllByStatus(MemberStatus.ADMIN);
         for (Member admin : admins) {
-            String requestJsonMessage = "{\"type\":\"request\", \"message\":\"" + userEmail + "에게 상담 요청\", \"senderEmail\":\"" + userEmail + "\"}";
-            websocketSessionManager.sendMessageToMember("ws/chat/notifications", admin.getUserEmail(), requestJsonMessage);
+            UserNotificationMessageDTO userNotificationMessageDTO = new UserNotificationMessageDTO( userEmail + "에게 상담 요청", userEmail);
+
+            try {
+                websocketSessionManager.sendMessageToMember("ws/chat/notifications", admin.getUserEmail(), objectMapper.writeValueAsString(userNotificationMessageDTO));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("메시지 직렬화 실패", e);
+            }
+
         }
         return roomId;
     }
-
 
     @Transactional
     public void cancelChatRoom(String roomId) {
@@ -54,8 +63,13 @@ public class UserChatRoomService {
 
         List<Member> admins = memberRepository.findAllByStatus(MemberStatus.ADMIN);
         for (Member admin : admins) {
-            String cancelJsonMessage = "{\"type\":\"cancel\", \"message\":\"" + userEmail + "의 상담 요청이 취소되었습니다\", \"senderEmail\":\"" + userEmail + "\"}";
-            websocketSessionManager.sendMessageToMember("ws/chat/notifications", admin.getUserEmail(), cancelJsonMessage);
+            UserNotificationMessageDTO userNotificationMessageDTO = new UserNotificationMessageDTO( userEmail + "의 상담 요청이 취소되었습니다", userEmail);
+
+            try {
+                websocketSessionManager.sendMessageToMember("ws/chat/notifications", admin.getUserEmail(), objectMapper.writeValueAsString(userNotificationMessageDTO));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("메시지 직렬화 실패", e);
+            }
         }
     }
 
