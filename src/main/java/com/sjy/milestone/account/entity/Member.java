@@ -24,7 +24,6 @@ import java.util.List;
 @Table(name = "MEMBERS")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "MemberStatus == activate")
 public class Member {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +39,7 @@ public class Member {
     @Column(name = "USER_NAME",length = 100)
     private String userName;
 
-    @CreationTimestamp // 시간들을 저장하는 임시 테이블 생성 해야 한다 진영아
+    @CreationTimestamp
     @Column(name = "REGISTRATION_DATE", updatable = false)
     private LocalDateTime registrationDate;
 
