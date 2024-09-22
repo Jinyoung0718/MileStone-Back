@@ -2,10 +2,10 @@ package com.sjy.milestone.chat.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sjy.milestone.chat.dto.AdminNotificationMessageDTO;
+import com.sjy.milestone.chat.dto.notificationdto.AdminNotificationMessageDTO;
 import com.sjy.milestone.chat.repository.ChatRoomRepository;
 import com.sjy.milestone.account.repository.MemberRepository;
-import com.sjy.milestone.chat.dto.ChatRoomDTO;
+import com.sjy.milestone.chat.dto.chatdto.ChatRoomDTO;
 import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.chat.entity.ChatRoom;
 import com.sjy.milestone.chat.entity.ChatRoomStatus;
@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service @RequiredArgsConstructor
@@ -107,7 +108,7 @@ public class AdminChatRoomService {
 
             if ("PENDING".equals(status)) {
                 try {
-                    ChatRoomDTO chatRoomDTO = ChatRoomDTO.fromRedis(
+                    ChatRoomDTO chatRoomDTO = fromRedis(
                             key.substring("chat/request/".length()), userEmail, ChatRoomStatus.valueOf(status)
                     );
                     pendingChatRooms.add(chatRoomDTO);
@@ -119,4 +120,14 @@ public class AdminChatRoomService {
         cursor.close();
         return pendingChatRooms;
     } // scan 이 안정적이고 keys 를 지양해야 하는 이유 블로그 첨부 (h_scan 대신에 scan 사용)
+
+    protected ChatRoomDTO fromRedis(String roomId, String userEmail, ChatRoomStatus status) {
+        ChatRoomDTO chatRoomDTO = new ChatRoomDTO();
+        chatRoomDTO.setRoomId(roomId);
+        chatRoomDTO.setUserEmail(userEmail);
+        chatRoomDTO.setStatus(status);
+        chatRoomDTO.setCreatedAt(LocalDate.now());
+        // Pending 일 경우의 목록을 불러들일 때 사용이 되므로 따로 admin 설정은 안 함, ACCEPT 할 때 admin 설정
+        return chatRoomDTO;
+    }
 }

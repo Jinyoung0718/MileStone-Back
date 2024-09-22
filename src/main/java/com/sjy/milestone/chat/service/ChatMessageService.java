@@ -2,12 +2,13 @@ package com.sjy.milestone.chat.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sjy.milestone.chat.dto.RedisMessageDTO;
+import com.sjy.milestone.chat.dto.chatdto.RedisMessageDTO;
+import com.sjy.milestone.chat.mapper.ChatMessageMapper;
 import com.sjy.milestone.chat.repository.ChatMessageRepository;
 import com.sjy.milestone.chat.repository.ChatRoomRepository;
 import com.sjy.milestone.account.repository.MemberRepository;
-import com.sjy.milestone.chat.dto.ChatContentDTO;
-import com.sjy.milestone.chat.dto.ChatMessageDTO;
+import com.sjy.milestone.chat.dto.chatdto.ChatContentDTO;
+import com.sjy.milestone.chat.dto.chatdto.ChatMessageDTO;
 import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.chat.entity.ChatMessage;
 import com.sjy.milestone.chat.entity.ChatRoom;
@@ -22,8 +23,10 @@ import java.util.stream.Collectors;
 
 @Service @RequiredArgsConstructor @Slf4j
 public class ChatMessageService {
+
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageMapper chatMessageMapper;
     private final MemberRepository memberRepository;
     private final RedisTemplate<String, String> redisTemplate;
     private final ObjectMapper objectMapper;
@@ -62,7 +65,7 @@ public class ChatMessageService {
             throw new RuntimeException("메시지 직렬화 실패", e);
         }
 
-        return ChatMessageDTO.fromEntity(savedMessage);
+        return chatMessageMapper.toDTO(savedMessage);
     }
 
     @Transactional(readOnly = true)
@@ -70,6 +73,6 @@ public class ChatMessageService {
         ChatRoom chatRoom = chatRoomRepository.findByIdAndStatus(roomId, ChatRoomStatus.CLOSED)
                 .orElseThrow(() -> new IllegalArgumentException("채팅방을 찾을 수 없습니다."));
 
-        return  chatRoom.getMessages().stream().map(ChatMessageDTO::fromEntity).collect(Collectors.toList());
+        return  chatRoom.getMessages().stream().map(chatMessageMapper::toDTO).collect(Collectors.toList());
     }
 }

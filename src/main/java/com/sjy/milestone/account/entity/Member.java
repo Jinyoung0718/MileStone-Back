@@ -1,6 +1,5 @@
 package com.sjy.milestone.account.entity;
 
-import com.sjy.milestone.account.MemberStatus;
 import com.sjy.milestone.cart.entity.CartItem;
 import com.sjy.milestone.chat.entity.ChatRoom;
 import com.sjy.milestone.board.entity.Board;
@@ -14,7 +13,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

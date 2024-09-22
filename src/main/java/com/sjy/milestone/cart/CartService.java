@@ -1,5 +1,6 @@
 package com.sjy.milestone.cart;
 
+import com.sjy.milestone.cart.mapper.CartItemMapper;
 import com.sjy.milestone.cart.repository.CartItemRepository;
 import com.sjy.milestone.account.repository.MemberRepository;
 import com.sjy.milestone.exception.badrequest.CartItemAlreadyExistsException;
@@ -27,6 +28,7 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final MemberRepository memberRepository;
     private final ProductOptionRepository productOptionRepository;
+    private final CartItemMapper cartItemMapper;
     private final MemberValidator memberValidator;
 
     public void addCartItem(String userEmail, CartItemRequestDTO cartItemRequestDTO) {
@@ -46,7 +48,7 @@ public class CartService {
             throw new CartItemAlreadyExistsException("이미 장바구니에 있는 상품입니다");
         }
 
-        CartItem cartItem = cartItemRequestDTO.toEntity(member ,productOption);
+        CartItem cartItem = cartItemMapper.toCartItem(cartItemRequestDTO, member ,productOption);
         cartItemRepository.save(cartItem);
     }
 
@@ -58,7 +60,7 @@ public class CartService {
         List<CartItem> cartItems = cartItemRepository.findByMember(member);
 
         return cartItems.stream()
-                .map(CartItem::toDTO)
+                .map(cartItemMapper::toCartItemDTO)
                 .toList();
     }
 

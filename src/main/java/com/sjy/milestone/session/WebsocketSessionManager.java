@@ -36,15 +36,16 @@ public class WebsocketSessionManager {
     private void processNextMessage(String path, String email) {
         Queue<String> messageQue = messageQueueMap.get(email);
         if (messageQue == null || messageQue.isEmpty()) return;
-
         List<WebSocketSession> webSocketSessions = pathSocketSessionMap.getOrDefault(path, Collections.emptyMap()).get(email);
+
         if (webSocketSessions != null && !webSocketSessions.isEmpty()) {
             String nextMessage = messageQue.poll();
-
             webSocketSessions.stream().filter(WebSocketSession::isOpen).forEach(session -> {
                 try {
-                    if (nextMessage != null) session.sendMessage(new TextMessage(nextMessage));
-                    scheduledExecutorService.schedule(() -> processNextMessage(path, email), 1, TimeUnit.SECONDS);
+                    if (nextMessage != null) {
+                        session.sendMessage(new TextMessage(nextMessage));
+                        scheduledExecutorService.schedule(() -> processNextMessage(path, email), 1, TimeUnit.SECONDS);
+                    }
                 } catch (IOException e) {
                     throw new WebSocketMessageException("메시지 전송 실패", e);
                 }
@@ -55,17 +56,11 @@ public class WebsocketSessionManager {
     }
 
     public boolean isSessionPresent(String sessionId) {
-        for (Map<String, List<WebSocketSession>> sessionMap : pathSocketSessionMap.values()) {
-            for (List<WebSocketSession> sessions : sessionMap.values()) {
-                for (WebSocketSession session : sessions) {
-                    if (session.getId().equals(sessionId)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
+        return pathSocketSessionMap.values().stream()
+                .flatMap(sessionMap -> sessionMap.values().stream())
+                .flatMap(List::stream)
+                .anyMatch(session -> session.getId().equals(sessionId));
+    } // Map -> flatMap
 
     public void removeSessionFromAllPaths(String sessionId) {
         Set<String> emailsToRemove = new HashSet<>();
@@ -80,10 +75,11 @@ public class WebsocketSessionManager {
     }
 
     public void saveOfflineMessage(String path, String email, String message) {
-        String redisKey = "offline_message" + path + ":" + email;
-        redisTemplate.opsForList().rightPush(redisKey, message);
+        if (message != null) {
+            String redisKey = "offline_message:" + path + ":" + email;
+            redisTemplate.opsForList().rightPush(redisKey, message);
+        }
     }
-
 
     public List<String> readOfflineMessage(String path, String email) {
         String redisKey = "offline_message" + path + ":" + email;

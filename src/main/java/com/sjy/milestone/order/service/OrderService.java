@@ -4,17 +4,20 @@ import com.sjy.milestone.account.repository.MemberRepository;
 import com.sjy.milestone.account.validator.MemberValidator;
 import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.cart.entity.CartItem;
+import com.sjy.milestone.cart.mapper.CartItemMapper;
 import com.sjy.milestone.cart.repository.CartItemRepository;
 import com.sjy.milestone.exception.badrequest.InsufficientStockException;
 import com.sjy.milestone.exception.notfound.OrderNotFoundException;
 import com.sjy.milestone.exception.notfound.ProductOptionNotFoundException;
 import com.sjy.milestone.exception.unauthorized.UnauthorizedException;
+import com.sjy.milestone.order.mapper.OrderMapper;
 import com.sjy.milestone.product.entity.ProductOption;
+import com.sjy.milestone.product.mapper.TempOrderItemMapper;
 import com.sjy.milestone.product.repository.ProductOptionRepository;
-import com.sjy.milestone.order.dto.DirectOrderDTO;
-import com.sjy.milestone.order.dto.OrderDTO;
-import com.sjy.milestone.order.dto.TempOrderDTO;
-import com.sjy.milestone.order.dto.TempOrderItemDTO;
+import com.sjy.milestone.order.dto.order.DirectOrderDTO;
+import com.sjy.milestone.order.dto.order.OrderDTO;
+import com.sjy.milestone.order.dto.temp.TempOrderDTO;
+import com.sjy.milestone.order.dto.temp.TempOrderItemDTO;
 import com.sjy.milestone.order.entity.Order;
 import com.sjy.milestone.order.entity.OrderStatus;
 import com.sjy.milestone.order.repository.OrderRepository;
@@ -33,11 +36,14 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final MemberValidator memberValidator;
     private final PaymentService paymentService;
+    private final CartItemMapper cartItemMapper;
+    private final OrderMapper orderMapper;
     private final OrderManagementService orderManagementService;
     private final CartItemRepository cartItemRepository;
     private final ProductOptionRepository productOptionRepository;
     private final OrderStatusScheduler orderStatusScheduler;
     private final OrderRepository orderRepository;
+    private final TempOrderItemMapper tempOrderItemMapper;
     private final RedisTemplate<String, String> redisTemplate;
 
     public TempOrderDTO getCartItemsByIds(String userEmail, List<Long> cartItemIds) {
@@ -46,7 +52,7 @@ public class OrderService {
         List<CartItem> cartItems = cartItemRepository.findByMemberAndIdIn(member, cartItemIds);
 
         List<TempOrderItemDTO> tempOrderItems = cartItems.stream()
-                .map(CartItem::toTempOrderItemDTO)
+                .map(cartItemMapper::toTempOrderItemFromCart)
                 .toList();
 
         Long totalPrice = tempOrderItems.stream()
@@ -55,6 +61,7 @@ public class OrderService {
 
         return TempOrderDTO.of(tempOrderItems, totalPrice);
     }
+
 
     public TempOrderDTO getDirectOrderItem(String userEmail, DirectOrderDTO directOrderDTO) {
         Member member = memberRepository.findMemberWithOrdersByUserEmail(userEmail);
@@ -66,8 +73,9 @@ public class OrderService {
             throw new InsufficientStockException("재고가 부족합니다");
         }
 
-        TempOrderItemDTO tempOrderItem = productOption.toTempOrderItemDTO(directOrderDTO.getQuantity());
+        TempOrderItemDTO tempOrderItem = tempOrderItemMapper.directToDTO(productOption, directOrderDTO.getQuantity());
         Long totalPrice = productOption.getProduct().getPrice() * directOrderDTO.getQuantity();
+
         return TempOrderDTO.of(List.of(tempOrderItem), totalPrice);
     }
 
@@ -131,7 +139,7 @@ public class OrderService {
         ));
 
         return orders.stream()
-                .map(Order::toDTO)
+                .map(orderMapper::toOrderDTO)
                 .toList();
     }
 }

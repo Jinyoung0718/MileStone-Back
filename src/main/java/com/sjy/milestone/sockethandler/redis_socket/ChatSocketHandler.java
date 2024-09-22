@@ -2,7 +2,7 @@ package com.sjy.milestone.sockethandler.redis_socket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sjy.milestone.chat.dto.RedisMessageDTO;
+import com.sjy.milestone.chat.dto.chatdto.RedisMessageDTO;
 import com.sjy.milestone.session.WebsocketSessionManager;
 import com.sjy.milestone.sockethandler.AbstractSocketHandler;
 import org.springframework.stereotype.Component;

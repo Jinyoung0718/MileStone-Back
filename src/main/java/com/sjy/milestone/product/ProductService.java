@@ -1,6 +1,7 @@
 package com.sjy.milestone.product;
 
 import com.sjy.milestone.exception.notfound.ProductNotFoundException;
+import com.sjy.milestone.product.mapper.ProductMapper;
 import com.sjy.milestone.product.repository.ProductRepository;
 import com.sjy.milestone.product.dto.DetailProductDTO;
 import com.sjy.milestone.product.dto.MenuProductDTO;
@@ -16,22 +17,23 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
 
     public List<MenuProductDTO> getAllProducts() {
         return productRepository.findAll().stream()
-                .map(Product::toMenuProductDTO)
+                .map(productMapper::toMenuProductDTO)
                 .toList();
     }
 
     public DetailProductDTO getProductById(Long productId) {
         Product product = productRepository.findDetailById(productId)
                 .orElseThrow(() -> new ProductNotFoundException("상품을 찾을 수 없습니다"));
-        return product.toDetailProductDTO();
+        return productMapper.toDetailProductDTO(product);
     }
 
     public List<MenuProductDTO> getProductsByCategory(String categoryName) {
         return productRepository.findByCategoryName(categoryName).stream()
-                .map(Product::toMenuProductDTO)
+                .map(productMapper::toMenuProductDTO)
                 .toList();
     }
 }

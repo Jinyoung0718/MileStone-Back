@@ -1,7 +1,7 @@
 package com.sjy.milestone.account.repository;
 
 import com.sjy.milestone.account.entity.Member;
-import com.sjy.milestone.account.MemberStatus;
+import com.sjy.milestone.account.entity.MemberStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

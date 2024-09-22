@@ -1,7 +1,6 @@
 package com.sjy.milestone.board.controller;
 
-import com.sjy.milestone.board.BoardService;
-import com.sjy.milestone.session.SesssionConst;
+import com.sjy.milestone.board.service.BoardService;
 import com.sjy.milestone.board.dto.DetailBoardDTO;
 import com.sjy.milestone.board.dto.MenuBoardDTO;
 import lombok.RequiredArgsConstructor;

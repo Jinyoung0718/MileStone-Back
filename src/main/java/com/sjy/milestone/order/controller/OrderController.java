@@ -2,10 +2,10 @@ package com.sjy.milestone.order.controller;
 
 import com.sjy.milestone.order.service.OrderService;
 import com.sjy.milestone.validator.ValidatorService;
-import com.sjy.milestone.order.dto.CompleteOrderDTO;
-import com.sjy.milestone.order.dto.DirectOrderDTO;
-import com.sjy.milestone.order.dto.OrderDTO;
-import com.sjy.milestone.order.dto.TempOrderDTO;
+import com.sjy.milestone.order.dto.order.CompleteOrderDTO;
+import com.sjy.milestone.order.dto.order.DirectOrderDTO;
+import com.sjy.milestone.order.dto.order.OrderDTO;
+import com.sjy.milestone.order.dto.temp.TempOrderDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

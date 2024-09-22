@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RequestResponseHandler extends AbstractSocketHandler {
+
     public RequestResponseHandler(WebsocketSessionManager websocketSessionManager) {
         super(websocketSessionManager, "ws/chat/notification");
     }

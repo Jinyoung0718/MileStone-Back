@@ -2,14 +2,15 @@ package com.sjy.milestone.chat.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sjy.milestone.chat.dto.UserNotificationMessageDTO;
+import com.sjy.milestone.chat.dto.notificationdto.UserNotificationMessageDTO;
+import com.sjy.milestone.chat.mapper.ChatRoomMapper;
 import com.sjy.milestone.exception.unauthorized.UnauthorizedException;
 import com.sjy.milestone.chat.repository.ChatRoomRepository;
 import com.sjy.milestone.account.repository.MemberRepository;
 import com.sjy.milestone.session.WebsocketSessionManager;
-import com.sjy.milestone.chat.dto.ChatRoomDTO;
+import com.sjy.milestone.chat.dto.chatdto.ChatRoomDTO;
 import com.sjy.milestone.account.entity.Member;
-import com.sjy.milestone.account.MemberStatus;
+import com.sjy.milestone.account.entity.MemberStatus;
 import com.sjy.milestone.chat.entity.ChatRoom;
 import com.sjy.milestone.chat.entity.ChatRoomStatus;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -28,6 +30,7 @@ public class UserChatRoomService {
     private final MemberRepository memberRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final WebsocketSessionManager websocketSessionManager;
+    private final ChatRoomMapper chatRoomMapper;
     private final ObjectMapper objectMapper;
 
     @Transactional
@@ -36,12 +39,15 @@ public class UserChatRoomService {
         if (member.getStatus().equals(MemberStatus.ADMIN)) {
             throw new UnauthorizedException("어드민은 신청 불가합니다");
         }
+
         String roomId = UUID.randomUUID().toString();
         String key = "chat/request/" + roomId;
+
         redisTemplate.opsForHash().put(key, "userEmail", userEmail);
         redisTemplate.opsForHash().put(key, "status", "PENDING");
 
         List<Member> admins = memberRepository.findAllByStatus(MemberStatus.ADMIN);
+
         for (Member admin : admins) {
             UserNotificationMessageDTO userNotificationMessageDTO = new UserNotificationMessageDTO( userEmail + "에게 상담 요청", userEmail);
 
@@ -79,10 +85,15 @@ public class UserChatRoomService {
 
         List<ChatRoom> closedChatRooms = chatRoomRepository.findByUserAndStatus(user, ChatRoomStatus.CLOSED);
 
+        if (closedChatRooms.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         return closedChatRooms.stream()
-                .map(ChatRoomDTO::fromEntity)
+                .map(chatRoomMapper::toChatRoomDTO)
                 .collect(Collectors.toList());
     }
+
 
     @Transactional
     public void deleteChatRoom(String roomId) {

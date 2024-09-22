@@ -1,6 +1,5 @@
 package com.sjy.milestone.review.entity;
 
-import com.sjy.milestone.review.dto.ReviewDTO;
 import com.sjy.milestone.account.entity.Member;
 import com.sjy.milestone.product.entity.Product;
 import jakarta.persistence.*;
@@ -49,21 +48,9 @@ public class Review {
     private Product product;
 
     @Builder
-    public Review(Long id, Member member, String content, Product product) {
-        this.id = id;
+    public Review(Member member, Product product, String content) {
         this.member = member;
-        this.content = content;
         this.product = product;
-    }
-
-    public ReviewDTO toDTO() {
-        return ReviewDTO.builder()
-                .id(this.id)
-                .content(this.content)
-                .createdAt(this.createdAt)
-                .memberEmail(this.member.getUserEmail())
-                .memberId(this.member.getId())
-                .productId(this.product.getId())
-                .build();
+        this.content = content;
     }
 }

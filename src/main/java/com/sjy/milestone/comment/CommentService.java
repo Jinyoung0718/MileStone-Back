@@ -1,5 +1,6 @@
 package com.sjy.milestone.comment;
 
+import com.sjy.milestone.comment.mapper.CommentMapper;
 import com.sjy.milestone.exception.notfound.BoardNotFoundException;
 import com.sjy.milestone.exception.notfound.CommentNotFoundException;
 import com.sjy.milestone.exception.unauthorized.UnauthorizedException;
@@ -22,6 +23,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final CommentMapper commentMapper;
     private final RedisTemplate<String, String> redisTemplate;
 
     public CommentDTO createComment(Long boardId, CommentDTO commentDTO, String userEmail) {
@@ -36,14 +38,15 @@ public class CommentService {
                 .orElseThrow(() -> new BoardNotFoundException("게시물을 찾을 수 없습니다"));
 
         Member member = memberRepository.findByUserEmail(userEmail);
-        Comment comment = commentDTO.toEntity(board, member, parentComment);
+        Comment comment = commentMapper.toEntity(commentDTO, board, member, parentComment);
         Comment savedComment = commentRepository.save(comment);
 
         if (parentComment != null) {
             String parentEmail = parentComment.getMember().getUserEmail();
             redisTemplate.convertAndSend("comment/notice",parentEmail + ": 새로운 대댓글이 작성되었습니다");
         }
-        return Comment.toDTO(savedComment);
+
+        return commentMapper.toDTO(savedComment);
     }
 
     public void deleteComment(Long commentId,String userEmail) {

@@ -2,6 +2,7 @@ package com.sjy.milestone.memberaddress;
 
 import com.sjy.milestone.exception.notfound.AddressNotFoundException;
 import com.sjy.milestone.account.repository.MemberRepository;
+import com.sjy.milestone.memberaddress.mapper.MemberAddressMapper;
 import com.sjy.milestone.util.PhoneNumberUtil;
 import com.sjy.milestone.account.validator.MemberValidator;
 import com.sjy.milestone.memberaddress.dto.AddressCreationDTO;
@@ -12,27 +13,27 @@ import com.sjy.milestone.memberaddress.entity.MemberAddress;
 import com.sjy.milestone.memberaddress.repository.MemberAddressRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-@Service @Transactional @RequiredArgsConstructor @Slf4j
+@Service @Transactional @RequiredArgsConstructor
 public class MemberAddressService {
 
     private final MemberAddressRepository memberAddressRepository;
     private final MemberRepository memberRepository;
+    private final MemberAddressMapper memberAddressMapper;
     private final MemberValidator memberValidator;
 
     public DefaultAddressDTO getDefaultAddress(String userEmail) {
         MemberAddress memberAddress = memberAddressRepository.findByMemberUserEmailAndIsDefaultTrue(userEmail)
                 .orElseThrow(() -> new AddressNotFoundException("기본 주소를 찾을 수 없습니다"));
-        return memberAddress.toDefaultAddressDTO();
+        return memberAddressMapper.toDefaultAddressDTO(memberAddress);
     } // 회원의 고정 주소를 조회
 
     public List<MemberAddressDTO> getAddressList(String userEmail) {
         return memberAddressRepository.findByMemberUserEmailAndIsDefaultFalse(userEmail)
                 .stream()
-                .map(MemberAddress::toDTO)
+                .map(memberAddressMapper::toMemberAddressDTO)
                 .toList();
     } // 회원의 일반 주소 목록을 조회
 
@@ -49,7 +50,7 @@ public class MemberAddressService {
                 memberAddressRepository.save(existingAddress);
             });
         }
-        MemberAddress newMemberAddress = addressCreationDTO.toEntity(member);
+        MemberAddress newMemberAddress = memberAddressMapper.toMemberAddress(addressCreationDTO, member);
         memberAddressRepository.save(newMemberAddress);
     }// 새로운 회원 주소를 등록
 

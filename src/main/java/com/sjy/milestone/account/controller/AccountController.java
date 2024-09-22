@@ -1,7 +1,9 @@
 package com.sjy.milestone.account.controller;
 
-import com.sjy.milestone.account.dto.*;
-import com.sjy.milestone.account.service.AccountService;
+import com.sjy.milestone.account.service.account.AccountService;
+import com.sjy.milestone.account.dto.accountdto.LoginDTO;
+import com.sjy.milestone.account.dto.accountdto.MemberContextDTO;
+import com.sjy.milestone.account.dto.accountdto.SignupDTO;
 import com.sjy.milestone.session.SesssionConst;
 import com.sjy.milestone.validator.ValidatorService;
 import jakarta.servlet.http.Cookie;

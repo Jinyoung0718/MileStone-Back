@@ -1,7 +1,5 @@
 package com.sjy.milestone.memberaddress.dto;
 
-import com.sjy.milestone.account.entity.Member;
-import com.sjy.milestone.memberaddress.entity.MemberAddress;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -26,15 +24,4 @@ public class AddressCreationDTO {
     private String tel;
 
     public boolean isDefault;
-
-    public MemberAddress toEntity(Member member) {
-        return MemberAddress.builder()
-                .member(member)
-                .zipcode(this.zipcode)
-                .address(this.address)
-                .addressDetail(this.addressDetail)
-                .tel(this.tel)
-                .isDefault(this.isDefault)
-                .build();
-    }
 }

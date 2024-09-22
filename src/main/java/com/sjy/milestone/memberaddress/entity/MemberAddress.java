@@ -1,8 +1,6 @@
 package com.sjy.milestone.memberaddress.entity;
 
 import com.sjy.milestone.account.entity.Member;
-import com.sjy.milestone.memberaddress.dto.DefaultAddressDTO;
-import com.sjy.milestone.memberaddress.dto.MemberAddressDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -41,6 +39,10 @@ public class MemberAddress {
     @Column(name = "IS_DEFAULT") @Setter
     private boolean isDefault;
 
+    public boolean getIsDefault() {
+        return isDefault;
+    }
+
     @Builder
     public MemberAddress(Member member, String zipcode, String address, String addressDetail, String tel, boolean isDefault) {
         this.member = member;
@@ -49,28 +51,5 @@ public class MemberAddress {
         this.addressDetail = addressDetail;
         this.tel = tel;
         this.isDefault = isDefault;
-    }
-
-    public DefaultAddressDTO toDefaultAddressDTO() {
-        return new DefaultAddressDTO(
-                this.zipcode,
-                this.address,
-                this.addressDetail,
-                this.tel,
-                this.member.getUserName(),
-                this.member.getUserEmail(),
-                this.member.getRegistrationDate().toLocalDate()
-        );
-    }
-
-    public MemberAddressDTO toDTO() {
-        return new MemberAddressDTO(
-                this.getId(),
-                this.getZipcode(),
-                this.getAddress(),
-                this.getAddressDetail(),
-                this.getTel(),
-                this.isDefault()
-                );
     }
 }

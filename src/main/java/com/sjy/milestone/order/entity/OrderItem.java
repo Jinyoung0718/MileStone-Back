@@ -1,6 +1,5 @@
 package com.sjy.milestone.order.entity;
 
-import com.sjy.milestone.order.dto.OrderItemDTO;
 import com.sjy.milestone.product.entity.Product;
 import com.sjy.milestone.product.entity.ProductOption;
 import jakarta.persistence.*;
@@ -46,24 +45,13 @@ public class OrderItem {
     private String productImg;
 
     @Builder
-    public OrderItem(ProductOption productOption, Product product, int quantity, String productName, Long price, String productImg) {
+    public OrderItem(Product product, ProductOption productOption, int quantity, String productName, Long price, String productImg) {
         this.product = product;
         this.productOption = productOption;
         this.quantity = quantity;
-        this.productName = product.getName();
-        this.price = product.getPrice();
-        this.productImg = product.getProductImg1();
-    }
-
-    public OrderItemDTO toDTO() {
-        return OrderItemDTO.builder()
-                .id(this.id)
-                .productOption(this.productOption.toDTO())
-                .quantity(this.quantity)
-                .productName(this.productName)
-                .price(this.price)
-                .productImg(this.productImg)
-                .build();
+        this.productName = productName;
+        this.price = price;
+        this.productImg = productImg;
     }
 
     public void cancel() {

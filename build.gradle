@@ -42,6 +42,8 @@ dependencies {
 	implementation 'net.bytebuddy:byte-buddy-agent:1.12.23'
 	implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
 	annotationProcessor 'org.projectlombok:lombok'
+	implementation 'org.mapstruct:mapstruct:1.5.0.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.0.Final'
 
 	// 테스트 전용 의존성
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

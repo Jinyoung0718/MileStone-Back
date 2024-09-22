@@ -10,4 +10,4 @@ public class CartItemDTO {
     private String productName;
     private ProductOptionDTO productOption;
     private String productImg;
-} // OrderItemDTO 와 똑같지만, 장바구니와 주문을 달리하기 위해 같은 필드여도 역할을 구분
+}

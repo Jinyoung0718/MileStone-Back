@@ -1,9 +1,8 @@
 package com.sjy.milestone.chat.controller;
 
 import com.sjy.milestone.chat.service.ChatMessageService;
-import com.sjy.milestone.session.SesssionConst;
-import com.sjy.milestone.chat.dto.ChatContentDTO;
-import com.sjy.milestone.chat.dto.ChatMessageDTO;
+import com.sjy.milestone.chat.dto.chatdto.ChatContentDTO;
+import com.sjy.milestone.chat.dto.chatdto.ChatMessageDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;

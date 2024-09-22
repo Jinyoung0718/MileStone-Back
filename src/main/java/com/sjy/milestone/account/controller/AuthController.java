@@ -1,11 +1,11 @@
 package com.sjy.milestone.account.controller;
 
-import com.sjy.milestone.account.dto.AuthDTO.EmailAuthRequestDTO;
-import com.sjy.milestone.account.dto.AuthDTO.EmailAuthVerifyDTO;
-import com.sjy.milestone.account.dto.AuthDTO.PhoneAuthRequestDTO;
-import com.sjy.milestone.account.dto.AuthDTO.PhoneAuthVerifyDTO;
-import com.sjy.milestone.account.service.AuthVerificationService;
-import com.sjy.milestone.account.service.NotificationService;
+import com.sjy.milestone.account.dto.verificationdto.EmailAuthRequestDTO;
+import com.sjy.milestone.account.dto.verificationdto.EmailAuthVerifyDTO;
+import com.sjy.milestone.account.dto.verificationdto.PhoneAuthRequestDTO;
+import com.sjy.milestone.account.dto.verificationdto.PhoneAuthVerifyDTO;
+import com.sjy.milestone.account.service.verification.AuthVerificationService;
+import com.sjy.milestone.account.service.verification.NotificationService;
 import com.sjy.milestone.validator.ValidatorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

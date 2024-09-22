@@ -1,8 +1,5 @@
 package com.sjy.milestone.order.entity;
 
-import com.sjy.milestone.order.dto.OrderDTO;
-import com.sjy.milestone.order.dto.OrderItemDTO;
-import com.sjy.milestone.order.dto.TempOrderDTO;
 import com.sjy.milestone.account.entity.Member;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -92,41 +89,5 @@ public class Order {
         for (OrderItem orderItem : orderItems) {
             orderItem.cancel();
         }
-    }
-
-    public OrderDTO toDTO() {
-        List<OrderItemDTO> orderItemDTOS = this.orderItems.stream()
-                .map(OrderItem::toDTO)
-                .toList();
-
-        return OrderDTO.builder()
-                .id(this.id)
-                .status(this.status)
-                .merchantUid(this.merchantUid)
-                .orderItems(orderItemDTOS)
-                .totalPrice(this.totalPrice)
-                .userEmail(this.member.getUserEmail())
-                .requestMessage(this.requestMessage)
-                .recipientName(this.recipientName)
-                .deliveryAddress(this.deliveryAddress)
-                .deliveryDetail(this.deliveryDetail)
-                .phoneNumber(this.phoneNumber)
-                .orderDate(this.orderDate)
-                .build();
-    }
-
-    public static Order fromDTO(Member member, String merchantUid, TempOrderDTO dto) {
-        return Order.builder()
-                .member(member)
-                .status(OrderStatus.PENDING)
-                .merchantUid(merchantUid)
-                .totalPrice(dto.getTotalPrice())
-                .requestMessage(dto.getRequestMessage())
-                .deliveryAddress(dto.getDeliveryAddress())
-                .deliveryDetail(dto.getDeliveryDetail())
-                .recipientName(dto.getRecipientName())
-                .deliveryZipcode(dto.getDeliveryZipcode())
-                .phoneNumber(dto.getPhoneNumber())
-                .build();
     }
 }
