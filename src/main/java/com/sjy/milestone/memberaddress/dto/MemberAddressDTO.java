@@ -12,5 +12,6 @@ public class MemberAddressDTO {
     private String address;
     private String addressDetail;
     private String tel;
-    private boolean isDefault;
+    private boolean defaultAddress;
 }
+
