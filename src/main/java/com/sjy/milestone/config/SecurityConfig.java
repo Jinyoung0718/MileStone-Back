@@ -1,6 +1,8 @@
 package com.sjy.milestone.config;
 
 import com.sjy.milestone.account.service.security.CustomAuthenticationFilter;
+import com.sjy.milestone.session.SesssionConst;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,20 +26,33 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager);
+        customAuthenticationFilter.setFilterProcessesUrl("/api/members/login");
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/members/login", "/api/members/signup", "/api/members/email",
-                                "/api/auth/phone-verification-code", "/api/auth/email-verification-code",
-                                "/api/auth/phone-verification-code/verify", "/api/auth/email-verification-code/verify",
-                                "/api/members/reactivate").permitAll()
+                        .requestMatchers(
+                                "/api/members/login",
+                                "/api/members/signup",
+                                "/api/members/email",
+                                "/api/auth/**",
+                                "/api/members/reactivate"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session
                         .sessionFixation(SessionManagementConfigurer.SessionFixationConfigurer::newSession)
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/api/members/logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies(SesssionConst.SESSION_COOKIE_NAME)
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            response.getWriter().write("로그아웃 성공하였습니다");
+                        })
                 );
 
         return http.build();

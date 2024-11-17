@@ -9,12 +9,10 @@ import com.sjy.milestone.redis.RedisService;
 import com.sjy.milestone.account.repository.AdminPhoneNumberRepository;
 import com.sjy.milestone.exception.badrequest.InvalidPasswordException;
 import com.sjy.milestone.exception.notfound.SessionNotFoundException;
-import com.sjy.milestone.exception.unauthorized.AccountDeactivatedException;
 import com.sjy.milestone.exception.unauthorized.UnauthorizedException;
 import com.sjy.milestone.memberaddress.repository.MemberAddressRepository;
 import com.sjy.milestone.account.repository.MemberRepository;
 import com.sjy.milestone.util.PhoneNumberUtil;
-import com.sjy.milestone.session.WebsocketSessionManager;
 import com.sjy.milestone.account.validator.MemberValidator;
 import com.sjy.milestone.account.validator.PasswordValidator;
 import com.sjy.milestone.account.entity.Member;
@@ -22,7 +20,6 @@ import com.sjy.milestone.memberaddress.entity.MemberAddress;
 import com.sjy.milestone.account.entity.MemberStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +30,6 @@ public class AccountService {
     private final MemberRepository memberRepository;
     private final MemberAddressRepository memberAddressRepository;
     private final PasswordEncoder passwordEncoder;
-    private final WebsocketSessionManager websocketSessionManager;
     private final PasswordValidator passwordValidator;
     private final MemberValidator memberValidator;
     private final MemberMapper memberMapper;
@@ -73,23 +69,6 @@ public class AccountService {
         redisService.deleteData(signupDTO.getUserEmail() + ":verified");
         redisService.deleteData(signupDTO.getTel() + ":verified");
     } // signUp
-
-    public void login(LoginDTO loginDTO) {
-        Member member = memberRepository.findByUserEmail(loginDTO.getUserEmail());
-
-        if (member == null || !passwordEncoder.matches(loginDTO.getUserPassword(), member.getUserPassword())) {
-            throw new UnauthorizedException("이메일 또는 비밀번호가 잘못되었습니다.");
-        }
-
-        if (member.getStatus() == MemberStatus.DEACTIVATED) {
-            throw new AccountDeactivatedException("비활성화된 계정입니다. 복구하시겠습니까?");
-        }
-    } // login
-
-    public void logout(String sessionId) {
-        websocketSessionManager.removeSessionFromAllPaths(sessionId);
-        SecurityContextHolder.clearContext();
-    } // logout
 
     public void turnDeactivateAuth(String userEmail) {
         if(userEmail == null) {

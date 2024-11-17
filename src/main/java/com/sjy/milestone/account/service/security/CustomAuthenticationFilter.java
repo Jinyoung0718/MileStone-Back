@@ -27,8 +27,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                     new UsernamePasswordAuthenticationToken(loginDTO.getUserEmail(), loginDTO.getUserPassword());
 
             return this.getAuthenticationManager().authenticate(authenticationToken);
+
         } catch (IOException e) {
             throw new RuntimeException("로그인 요청 파싱에 실패했습니다.", e);
         }
     }
 }
+
+// Spring Security의 기본 로그인 처리 필터를 확장한 클래스
+// JSON 형식으로 전달된 로그인 요청(userEmail, userPassword)을 파싱하고 인증을 처리

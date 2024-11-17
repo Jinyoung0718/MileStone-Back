@@ -27,3 +27,12 @@ public class CustomUserDetailService implements UserDetailsService {
         return new CustomUserDetails(member);
     }
 }
+
+// Spring Security가 제공하는 UserDetailsService를 구현한 클래스
+// 이메일(userEmail)을 기반으로 데이터베이스에서 사용자 정보를 조회하여 반환
+// 로그인 요청이 들어오면 AuthenticationManager가 이 메서드를 호출
+
+//  DaoAuthenticationProvider란 Spring Security에서 가장 일반적으로 사용되는 AuthenticationProvider 구현체
+// Spring Security의 자동 설정 덕분에, UserDetailsService를
+// 구현한 클래스(CustomUserDetailService)가 자동으로 DaoAuthenticationProvider에 연결
+// Provider가 패스워드 매처까지 작동시켜서 따로 처리 안 해주어도 됨

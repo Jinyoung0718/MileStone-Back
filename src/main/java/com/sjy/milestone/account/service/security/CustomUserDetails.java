@@ -53,3 +53,5 @@ public class CustomUserDetails implements UserDetails {
         return true;
     }
 }
+
+// CustomUserDetailService 의 loadUserByUsername 메서드에서 반환된 CustomUserDetails 는 인증과 권한 검사에 사용
